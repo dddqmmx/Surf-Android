@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Surf</string>
+    <string name="copyright_information">DD的奇妙冒险© 2018–2022</string>
+    <string name="username">账号</string>
+    <string name="password">密码</string>
+    <string name="login_title">登录您的账号</string>
+    <string name="login_hint">账号只会保存在本地,不会上传到官方服务器</string>
+    <string name="server_select">登录服务器  </string>
+
+    <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
+        <item>官方服务器</item>
+    </string-array>
+</resources>

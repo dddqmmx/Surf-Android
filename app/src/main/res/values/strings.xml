@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Surf</string>
+    <string name="copyright_information">dddqmmx© 2018–2022</string>
+    <string name="username">UserName</string>
+    <string name="password">PassWord</string>
+    <string name="login_title">Login to your account</string>
+    <string name="login_hint">The account will only be saved locally and will not be uploaded to the official server</string>
+    <string name="server_select">login server</string>
+
+    <string-array name="default_server_arrays">
+        <item>official server</item>
+    </string-array>
+
+</resources>
