@@ -26,4 +26,8 @@
         <item name="android:navigationBarColor">@color/white</item>
     </style>
 
+    <style name="Theme.main" parent="Theme.Surf">
+        <item name="android:navigationBarColor">@color/white</item>
+    </style>
+
 </resources>

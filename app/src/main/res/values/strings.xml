@@ -6,6 +6,10 @@
     <string name="login_title">Login to your account</string>
     <string name="login_hint">The account will only be saved locally and will not be uploaded to the official server</string>
     <string name="server_select">login server</string>
+    <string name="message">Message</string>
+    <string name="friend">Friend</string>
+    <string name="my_info">My Info</string>
+    <string name="default_title">Default Title</string>
 
     <string-array name="default_server_arrays">
         <item>official server</item>
