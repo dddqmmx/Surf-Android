@@ -2,13 +2,93 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#588FBA"
+        android:padding="15dp">
+        <com.dd.surf.view.ClipPathCircleView
+            android:id="@+id/head"
+            android:src="@drawable/icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/head">
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:textColor="#FFFFFF"
+                android:text="@string/default_name"/>
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:text="@string/default_user_name"
+                android:textColor="#C2E5FF"
+                android:layout_below="@id/name"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="TestView3"
-        android:textSize="50sp"
-        android:gravity="center"/>
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <RelativeLayout
+            android:id="@+id/setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp">
+
+            <ImageView
+                android:id="@+id/setting_image"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/settings"/>
+
+            <TextView
+                android:layout_marginStart="20dp"
+                android:layout_toEndOf="@id/setting_image"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/developers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp">
+
+            <ImageView
+                android:id="@+id/developers_image"
+                android:layout_centerVertical="true"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/developers"/>
+
+            <TextView
+                android:layout_marginStart="20dp"
+                android:layout_toEndOf="@id/developers_image"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/developers"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -10,6 +10,10 @@
     <string name="friend">Friend</string>
     <string name="my_info">My Info</string>
     <string name="default_title">Default Title</string>
+    <string name="default_name">Default Name</string>
+    <string name="default_user_name">Default User Name</string>
+    <string name="settings">Setting</string>
+    <string name="developers">Developers</string>
 
     <string-array name="default_server_arrays">
         <item>official server</item>

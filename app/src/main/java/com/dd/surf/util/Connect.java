@@ -1,4 +1,4 @@
-package com.dd.surf.view.util;
+package com.dd.surf.util;
 
 import android.app.Application;
 
