@@ -12,6 +12,7 @@
     <string name="my_info">我的</string>
     <string name="default_title">默认标题</string>
     <string name="default_name">默认名字</string>
+    <string name="default_message">默认消息</string>
     <string name="default_user_name">默认用户名</string>
     <string name="settings">设置</string>
     <string name="developers">开发者</string>

@@ -43,6 +43,8 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         List<Message> messageList = control.getMessageList(control.getUserName(),control.getPassword());
         for (Message message : messageList) {
             View messageView = layoutInflater.inflate(R.layout.view_message,null);
+            TextView nameText = messageView.findViewById(R.id.name);
+            nameText.setText(message.getName());
             messageListLayout.addView(messageView);
         }
 

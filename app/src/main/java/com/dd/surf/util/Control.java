@@ -104,7 +104,7 @@ public class Control extends Application {
         List<Message> messageList = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("command","getName");
+            jsonObject.put("command","getGroupList");
             jsonObject.put("userName",userName);
             jsonObject.put("userPass",userPass);
             String reply = send(jsonObject.toString().getBytes());
@@ -115,8 +115,8 @@ public class Control extends Application {
                 JSONArray jsonArray = repostJson.getJSONArray(key);
                 Message message = new Message();
                 message.setId(Integer.parseInt(key));
-                message.setHead(jsonArray.getString(0));
-                message.setName(jsonArray.getString(1));
+                message.setName(jsonArray.getString(0));
+                message.setHead(jsonArray.getString(1));
                 messageList.add(message);
             }
         }catch (Exception e){
