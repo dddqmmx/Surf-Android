@@ -86,11 +86,25 @@ public class Control extends Application {
         return false;
     }
 
-    public String getName(String userName){
+    public String getNameByUserName(String userName){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("command","getName");
+            jsonObject.put("command","getNameByUserName");
             jsonObject.put("userName",userName);
+            String reply = send(jsonObject.toString().getBytes());
+            JSONObject replyJson = new JSONObject(reply);
+            return replyJson.getString("name");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "error";
+    }
+
+    public String getNameById(int id){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getNameByUserId");
+            jsonObject.put("id",id);
             String reply = send(jsonObject.toString().getBytes());
             JSONObject replyJson = new JSONObject(reply);
             return replyJson.getString("name");
@@ -123,6 +137,36 @@ public class Control extends Application {
             e.printStackTrace();
         }
         return messageList;
+    }
+
+    public JSONArray getFriendList(String userName,String userPass){
+        JSONArray jsonArray = null;
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getFriendList");
+            jsonObject.put("userName",userName);
+            jsonObject.put("userPass",userPass);
+            String reply = send(jsonObject.toString().getBytes());
+            jsonArray = new JSONArray(reply);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return jsonArray;
+    }
+
+    public JSONArray getFriendRequestList(String userName,String userPass){
+        JSONArray jsonArray = null;
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getFriendRequestList");
+            jsonObject.put("userName",userName);
+            jsonObject.put("userPass",userPass);
+            String reply = send(jsonObject.toString().getBytes());
+            jsonArray = new JSONArray(reply);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return jsonArray;
     }
 
 }

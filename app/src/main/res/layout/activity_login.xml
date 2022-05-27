@@ -71,7 +71,8 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:ems="15"
-                    android:hint="@string/password" />
+                    android:hint="@string/password"
+                    android:inputType="textPassword" />
             </LinearLayout>
 
             <LinearLayout

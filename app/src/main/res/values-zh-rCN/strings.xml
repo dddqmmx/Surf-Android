@@ -16,6 +16,8 @@
     <string name="default_user_name">默认用户名</string>
     <string name="settings">设置</string>
     <string name="developers">开发者</string>
+    <string name="friend_request">好友请求</string>
+    <string name="friend_list">好友列表</string>
 
     <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
         <item>官方服务器</item>

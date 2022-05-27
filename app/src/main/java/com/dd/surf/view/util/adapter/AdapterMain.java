@@ -19,6 +19,9 @@ import com.dd.surf.entity.Message;
 import com.dd.surf.util.Control;
 import com.google.android.material.tabs.TabLayout;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,16 +52,28 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         }
 
 
-        View friendList = layoutInflater.inflate(R.layout.view_friend_list,null);
+        View friendsList = layoutInflater.inflate(R.layout.view_friend_list,null);
+        LinearLayout friendListLayout = friendsList.findViewById(R.id.friend_list);
+        JSONArray friendList = control.getFriendList(control.getUserName(),control.getPassword());
+        for (int i = 0 ; i < friendList.length(); i++){
+            try {
+                View friendView = layoutInflater.inflate(R.layout.view_message,null);
+                TextView nameText = friendView.findViewById(R.id.name);
+                nameText.setText(control.getNameById((int) friendList.get(i)));
+                friendListLayout.addView(friendView);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         View myInfo = layoutInflater.inflate(R.layout.view_my_info,null);
         TextView userName = myInfo.findViewById(R.id.user_name);
         userName.setText(control.getUserName());
         TextView name = myInfo.findViewById(R.id.name);
-        name.setText(control.getName(control.getUserName()));
+        name.setText(control.getNameByUserName(control.getUserName()));
 
         viewList.add(messagesList);
-        viewList.add(friendList);
+        viewList.add(friendsList);
         viewList.add(myInfo);
     }
 

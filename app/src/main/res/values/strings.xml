@@ -15,6 +15,8 @@
     <string name="default_user_name">Default User Name</string>
     <string name="settings">Setting</string>
     <string name="developers">Developers</string>
+    <string name="friend_request">Friend Request</string>
+    <string name="friend_list">Friend List</string>
 
     <string-array name="default_server_arrays">
         <item>official server</item>
