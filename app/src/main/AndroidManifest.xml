@@ -18,9 +18,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Surf">
         <activity
-            android:label="@string/developers"
+            android:name=".Chat"
+            android:exported="false"
+            android:theme="@style/Theme.chat"/>
+        <activity
             android:name=".Developers"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/developers" />
         <activity
             android:name=".Main"
             android:exported="false"
@@ -36,6 +40,7 @@
             android:theme="@style/Theme.NoTitleFullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

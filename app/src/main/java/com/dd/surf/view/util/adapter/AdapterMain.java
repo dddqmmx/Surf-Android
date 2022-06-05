@@ -10,14 +10,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dd.surf.Developers;
+import com.dd.surf.Chat;
 import com.dd.surf.R;
 import com.dd.surf.entity.Message;
 import com.dd.surf.util.Control;
-import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,12 +41,18 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
 
         LinearLayout messageListLayout = messagesList.findViewById(R.id.message_list);
 
-        List<Message> messageList = control.getMessageList(control.getUserName(),control.getPassword());
+        List<Message> messageList = control.getGroupList(control.getUserName(),control.getPassword());
         for (Message message : messageList) {
             View messageView = layoutInflater.inflate(R.layout.view_message,null);
             TextView nameText = messageView.findViewById(R.id.name);
             nameText.setText(message.getName());
             messageListLayout.addView(messageView);
+            messageView.setOnClickListener((view)->{
+                Intent chatInteger = new Intent(activity, Chat.class);
+                chatInteger.putExtra("type",message.getType());
+                chatInteger.putExtra("id",message.getId());
+                activity.startActivity(chatInteger);
+            });
         }
 
 

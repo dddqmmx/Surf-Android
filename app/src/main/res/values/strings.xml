@@ -17,6 +17,7 @@
     <string name="developers">Developers</string>
     <string name="friend_request">Friend Request</string>
     <string name="friend_list">Friend List</string>
+    <string name="send">Send</string>
 
     <string-array name="default_server_arrays">
         <item>official server</item>

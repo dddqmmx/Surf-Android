@@ -20,8 +20,18 @@ import java.util.List;
 
 public class Control extends Application {
 
+    private int id = 0;
+
     private String userName = null;
     private String password = null;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getUserName() {
         return userName;
@@ -86,6 +96,21 @@ public class Control extends Application {
         return false;
     }
 
+    public int getUserId(String userName,String userPass){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getUserId");
+            jsonObject.put("userName",userName);
+            jsonObject.put("userPass",userPass);
+            String reply = send(jsonObject.toString().getBytes());
+            JSONObject replyJson = new JSONObject(reply);
+            return replyJson.getInt("id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public String getNameByUserName(String userName){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -114,7 +139,7 @@ public class Control extends Application {
         return "error";
     }
 
-    public List<Message> getMessageList(String userName,String userPass){
+    public List<Message> getGroupList(String userName,String userPass){
         List<Message> messageList = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
         try {
@@ -128,6 +153,7 @@ public class Control extends Application {
                 String key = (String) keys.next();
                 JSONArray jsonArray = repostJson.getJSONArray(key);
                 Message message = new Message();
+                message.setType(1);
                 message.setId(Integer.parseInt(key));
                 message.setName(jsonArray.getString(0));
                 message.setHead(jsonArray.getString(1));
@@ -167,6 +193,20 @@ public class Control extends Application {
             e.printStackTrace();
         }
         return jsonArray;
+    }
+
+    public String getGroupNameById(int id){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getGroupNameById");
+            jsonObject.put("id",id);
+            String reply = send(jsonObject.toString().getBytes());
+            JSONObject replyJson = new JSONObject(reply);
+            return replyJson.getString("name");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "error";
     }
 
 }

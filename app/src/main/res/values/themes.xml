@@ -30,4 +30,8 @@
         <item name="android:navigationBarColor">@color/white</item>
     </style>
 
+    <style name="Theme.chat" parent="Theme.Surf">
+        <item name="android:navigationBarColor">#EBEDF5</item>
+    </style>
+
 </resources>

@@ -29,6 +29,7 @@ public class Login extends AppCompatActivity {
             if (control.login(userNameText,passwordText)) {
                 control.setUserName(userNameText);
                 control.setPassword(passwordText);
+                control.setId(control.getUserId(userNameText,passwordText));
                 startActivity(new Intent(this,Main.class));
                 finish();
             } else {

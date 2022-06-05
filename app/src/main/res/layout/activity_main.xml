@@ -10,39 +10,37 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/footTab"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:layout_above="@+id/footTab" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/footTab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        app:tabIconTint="@color/tab_icon"
         app:tabIndicatorColor="#588FBA"
-        app:tabSelectedTextColor="#588FBA"
-        app:tabIconTint="@color/tab_icon">
+        app:tabSelectedTextColor="#588FBA">
 
         <com.google.android.material.tabs.TabItem
+            style="@style/TextAppearance.Design.Tab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/message"
-            android:text="@string/message"
-            style="@style/TextAppearance.Design.Tab"/>
+            android:text="@string/message" />
 
         <com.google.android.material.tabs.TabItem
+            style="@style/TextAppearance.Design.Tab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/contact"
-            android:text="@string/friend"
-            style="@style/TextAppearance.Design.Tab"/>
+            android:text="@string/friend" />
 
         <com.google.android.material.tabs.TabItem
+            style="@style/TextAppearance.Design.Tab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/person"
-            android:text="@string/my_info"
-            style="@style/TextAppearance.Design.Tab"/>
+            android:text="@string/my_info" />
     </com.google.android.material.tabs.TabLayout>
 
 

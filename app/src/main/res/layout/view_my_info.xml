@@ -19,13 +19,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/head">
+
             <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:textColor="#FFFFFF"
-                android:text="@string/default_name"/>
+                android:text="@string/default_name"
+                android:textColor="#FFFFFF" />
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
@@ -57,12 +58,12 @@
                 android:src="@drawable/settings"/>
 
             <TextView
-                android:layout_marginStart="20dp"
-                android:layout_toEndOf="@id/setting_image"
-                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/settings"/>
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:layout_toEndOf="@id/setting_image"
+                android:text="@string/settings" />
 
         </RelativeLayout>
 
