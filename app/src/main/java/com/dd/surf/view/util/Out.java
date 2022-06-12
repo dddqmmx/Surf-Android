@@ -7,4 +7,5 @@ public class Out {
     public static void print(Activity activity, String msg){
         Toast.makeText(activity,msg,Toast.LENGTH_LONG).show();
     }
+
 }

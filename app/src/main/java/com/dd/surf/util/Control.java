@@ -2,6 +2,7 @@ package com.dd.surf.util;
 
 import android.app.Application;
 
+import com.dd.surf.entity.ChatMessage;
 import com.dd.surf.entity.Message;
 
 import org.json.JSONArray;
@@ -55,7 +56,7 @@ public class Control extends Application {
 
     public boolean initialize(){
         try {
-            inetAddress = InetAddress.getByName("192.168.5.4");
+            inetAddress = InetAddress.getByName("192.168.5.2");
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -207,6 +208,51 @@ public class Control extends Application {
             e.printStackTrace();
         }
         return "error";
+    }
+
+    public int getMessageCount(int contactType, int contactId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getMessageCount");
+            jsonObject.put("contactType",contactType);
+            jsonObject.put("contactId",contactId);
+            String reply = send(jsonObject.toString().getBytes());
+            JSONObject replyJson = new JSONObject(reply);
+            return replyJson.getInt("count");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<ChatMessage> getMessageList(int contactType, int contactId, int startRow, int showRow){
+        JSONObject jsonObject = new JSONObject();
+        List<ChatMessage> chatMessageList = new ArrayList<>();
+        try {
+            jsonObject.put("command","getMessageList");
+            jsonObject.put("contactType",contactType);
+            jsonObject.put("contactId",contactId);
+            jsonObject.put("startRow",startRow);
+            jsonObject.put("showRow",showRow);
+            String reply = send(jsonObject.toString().getBytes());
+            JSONObject replyJson = new JSONObject(reply);
+            System.out.println(reply);
+            Iterator<?> keys = replyJson.keys();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                System.out.println(key);
+                //System.out.println(jsonObject.getString(key));
+                JSONObject messageJsonObject = replyJson.getJSONObject(key);
+                ChatMessage chatMessage = new ChatMessage();
+                chatMessage.setSenderId(messageJsonObject.getInt("senderId"));
+                chatMessage.setMessageType(messageJsonObject.getInt("messageType"));
+                chatMessage.setMessage(messageJsonObject.getString("message"));
+                chatMessageList.add(chatMessage);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return chatMessageList;
     }
 
 }

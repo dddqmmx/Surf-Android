@@ -11,7 +11,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dd.surf.entity.ChatMessage;
 import com.dd.surf.util.Control;
+import com.dd.surf.view.util.Out;
+
+import java.util.List;
 
 public class Chat extends AppCompatActivity {
 
@@ -57,10 +61,19 @@ public class Chat extends AppCompatActivity {
 
         messageList = findViewById(R.id.message_list);
 
-        addMessageText(1,"我是傻逼");
+
+        Out.print(this,String.valueOf(control.getMessageCount(type,id)));
+        List<ChatMessage> chatMessageList = control.getMessageList(type,id,0,20);
+
+        for (ChatMessage chatMessage : chatMessageList){
+            addMessageText(chatMessage.getSenderId(),chatMessage.getMessage());
+        }
+
+        /*
         addMessageText(2,"我也是傻逼");
         addMessageText(3,"👀👀👀");
-        addMessageText(4,"扣1送原神6480");
+        addMessageText(4,"扣1送原神6480");*/
+
     }
 
     public void addMessageText(int id,String text){
