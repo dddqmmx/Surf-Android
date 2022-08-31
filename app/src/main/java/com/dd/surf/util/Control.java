@@ -54,30 +54,24 @@ public class Control extends Application {
     public int port = 2077;
     InetAddress inetAddress = null;
 
-    public boolean initialize(){
-        try {
-            inetAddress = InetAddress.getByName("192.168.5.2");
-            return true;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public String send(byte[] data){
+        DatagramSocket socket = null;
         try {
+            InetAddress inetAddress = InetAddress.getByName("192.168.117.86");
             DatagramPacket packet = new DatagramPacket(data, data.length,inetAddress,port);
-            DatagramSocket socket = new DatagramSocket();
+            socket = new DatagramSocket();
             socket.send(packet);
-            byte[] data2 = new byte[1024];
 
+            byte[] data2 = new byte[1024];
             DatagramPacket packet2 = new DatagramPacket(data2, data2.length);
             socket.receive(packet2);
-            String reply = new String(data2, 0, packet2.getLength());
-            socket.close();
-            return reply;
+            return new String(data2, 0, packet2.getLength());
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            if (socket != null) {
+                socket.close();
+            }
         }
         return null;
     }

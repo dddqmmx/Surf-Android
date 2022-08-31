@@ -9,6 +9,7 @@ import android.os.Message;
 import android.os.StrictMode;
 
 import com.dd.surf.util.Control;
+import com.dd.surf.util.Server;
 
 public class Load extends AppCompatActivity {
 
@@ -20,8 +21,10 @@ public class Load extends AppCompatActivity {
 
         setContentView(R.layout.activity_load);
         try {
-            Control control = (Control) getApplication();
-            System.out.println(control.initialize());
+            Server server = (Server) getApplication();
+            server.initialization();
+            if (server.connect()){
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
