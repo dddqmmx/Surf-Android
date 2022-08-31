@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 
-public class TcpClient {
+public class TCPClient {
     Socket socket = null;
     OutputStream os = null;
     public void initialization(String host){

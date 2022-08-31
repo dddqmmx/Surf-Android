@@ -4,16 +4,17 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class UdpClient extends Thread{
+public class UDPClient extends Thread{
+
+    public int port = 11451;
 
     @Override
     public void run() {
         DatagramSocket socket= null;
         //接收udp消息的socket
-
-        int port = 11451;
 
         try {
             socket = new DatagramSocket(port);
@@ -41,7 +42,7 @@ public class UdpClient extends Thread{
 
                 //使用多线程进行消息处理
                 //作用是处理多个客户端的连接请求
-                UDPServerThread udpServerThread = new UDPServerThread(packet,info,inetAddress,port);
+                UDPServerThread udpServerThread = new UDPServerThread(packet,info,inetAddress,packetPort);
                 udpServerThread.start();
 
             } catch (Exception e) {
@@ -50,7 +51,15 @@ public class UdpClient extends Thread{
         }
     }
 
-    public String send(byte[] data){
+    public void send(Object object){
+        send(object.toString());
+    }
+
+    public void send(String string){
+        send(string.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public boolean send(byte[] data){
         DatagramSocket socket = null;
         try {
             InetAddress inetAddress = InetAddress.getByName("192.168.117.86");
@@ -61,7 +70,7 @@ public class UdpClient extends Thread{
             byte[] data2 = new byte[1024];
             DatagramPacket packet2 = new DatagramPacket(data2, data2.length);
             socket.receive(packet2);
-            return new String(data2, 0, packet2.getLength());
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
@@ -69,6 +78,6 @@ public class UdpClient extends Thread{
                 socket.close();
             }
         }
-        return null;
+        return false;
     }
 }

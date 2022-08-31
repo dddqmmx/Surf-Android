@@ -2,37 +2,35 @@ package com.dd.surf.util;
 
 import android.app.Application;
 
-import com.dd.surf.socket.TcpClient;
-import com.dd.surf.socket.UdpClient;
+import com.dd.surf.socket.TCPClient;
+import com.dd.surf.socket.UDPClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.net.Socket;
-
 public class Server extends Application {
 
-    private TcpClient tcpClient;
-    private UdpClient udpClient;
+    private TCPClient tcpClient;
+    private UDPClient udpClient;
 
     private String host = "192.168.117.86";
 
     public void initialization(){
-        tcpClient = new TcpClient();
-        udpClient = new UdpClient();
+        tcpClient = new TCPClient();
+        udpClient = new UDPClient();
         tcpClient.initialization(host);
     }
 
     public boolean connect(){
-        if (tcpClient.connect()){
-            udpClient.start();
-
+        try {
+            if (tcpClient.connect()){
+                udpClient.start();
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("port",udpClient.port);
+                udpClient.send(jsonObject);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return false;
     }
