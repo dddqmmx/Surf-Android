@@ -1,8 +1,10 @@
 package com.dd.surf.socket;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -10,6 +12,11 @@ import java.util.Arrays;
 public class UDPClient extends Thread{
 
     public int port = 11451;
+    public String host;
+
+    public void initialization(String host){
+        this.host = host;
+    }
 
     @Override
     public void run() {
@@ -62,7 +69,7 @@ public class UDPClient extends Thread{
     public boolean send(byte[] data){
         DatagramSocket socket = null;
         try {
-            InetAddress inetAddress = InetAddress.getByName("192.168.117.86");
+            InetAddress inetAddress = InetAddress.getByName(host);
             DatagramPacket packet = new DatagramPacket(data, data.length,inetAddress,2077);
             socket = new DatagramSocket();
             socket.send(packet);
