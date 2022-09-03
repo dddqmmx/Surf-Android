@@ -1,5 +1,8 @@
 package com.dd.surf.socket;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -36,6 +39,7 @@ public class UDPClient extends Thread{
         //循环获取收到的消息
         while(true) {
             try {
+                System.out.println("getRun");
                 //线程阻塞只有接收到消息才运行
                 socket.receive(packet);
 
@@ -49,13 +53,25 @@ public class UDPClient extends Thread{
 
                 //使用多线程进行消息处理
                 //作用是处理多个客户端的连接请求
-                UDPServerThread udpServerThread = new UDPServerThread(packet,info,inetAddress,packetPort);
-                udpServerThread.start();
+                System.out.println("is run ing");
+                UDPClientThread udpClientThread = new UDPClientThread(packet,info,inetAddress,packetPort);
+                udpClientThread.start();
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setIpPort(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","setIpPort");
+            jsonObject.put("port",port);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
     }
 
     public void send(Object object){

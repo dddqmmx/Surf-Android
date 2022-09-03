@@ -6,7 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
-public class UDPServerThread extends Thread{
+public class UDPClientThread extends Thread{
 
     //前台传过来的信息
     DatagramPacket datagramPacket = null;
@@ -15,7 +15,7 @@ public class UDPServerThread extends Thread{
     int port = 0;
 
     //构造方法对UDPServer传进来的消息进行赋值
-    public UDPServerThread(DatagramPacket packet, String info, InetAddress inetAddress, int port) {
+    public UDPClientThread(DatagramPacket packet, String info, InetAddress inetAddress, int port) {
         this.datagramPacket = packet;
         this.info = info;
         this.inetAddress = inetAddress;
@@ -25,7 +25,7 @@ public class UDPServerThread extends Thread{
     //具体地处理逻辑
     @Override
     public void run() {
-
+        System.out.println("udp : "+info);
     }
 
     //发送消息

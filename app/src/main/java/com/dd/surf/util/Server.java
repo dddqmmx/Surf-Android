@@ -13,7 +13,7 @@ public class Server extends Application {
     private TCPClient tcpClient;
     private UDPClient udpClient;
 
-    private String host = "192.168.28.222";
+    private String host = "192.168.117.118";
 
     public void initialization(){
         tcpClient = new TCPClient();
@@ -26,12 +26,10 @@ public class Server extends Application {
         try {
             if (tcpClient.connect()){
                 udpClient.start();
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("command","setIpPort");
-                jsonObject.put("port",udpClient.port);
-                udpClient.send(jsonObject);
+                udpClient.setIpPort();
+                return true;
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
