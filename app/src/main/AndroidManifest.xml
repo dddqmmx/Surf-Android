@@ -18,8 +18,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Surf">
-        <service android:name=".service.UpdateChatMessageService" />
 
+
+        <service android:name=".service.UpdateChatMessageService" />
+        <activity
+            android:name=".DeveloperOption"
+            android:exported="false"
+            android:label="@string/developer_option_title"/>
         <activity
             android:name=".Chat"
             android:exported="false"
@@ -38,12 +43,11 @@
             android:exported="false"
             android:theme="@style/Theme.login" />
         <activity
-            android:name=".TestActivity"
+            android:name=".Load"
             android:exported="true"
             android:theme="@style/Theme.NoTitleFullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

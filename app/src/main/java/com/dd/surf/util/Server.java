@@ -1,6 +1,7 @@
 package com.dd.surf.util;
 
 import android.app.Application;
+import android.net.wifi.WifiManager;
 
 import com.dd.surf.socket.TCPClient;
 import com.dd.surf.socket.UDPClient;
@@ -13,20 +14,19 @@ public class Server extends Application {
     private TCPClient tcpClient;
     private UDPClient udpClient;
 
-    private String host = "192.168.117.118";
+    private String host = "192.168.5.3";
 
-    public void initialization(){
+    public boolean initialization(){
         tcpClient = new TCPClient();
         udpClient = new UDPClient();
-        tcpClient.initialization(host);
+        boolean tcpInitialization = tcpClient.initialization(host);
         udpClient.initialization(host);
+        return tcpInitialization;
     }
 
     public boolean connect(){
         try {
             if (tcpClient.connect()){
-                udpClient.start();
-                udpClient.setIpPort();
                 return true;
             }
         } catch (Exception e) {

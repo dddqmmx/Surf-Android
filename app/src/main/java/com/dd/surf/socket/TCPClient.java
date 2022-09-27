@@ -10,17 +10,39 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class TCPClient {
     Socket socket = null;
     OutputStream os = null;
-    public void initialization(String host){
-        try {
-            socket = new Socket(host, 2042);
-            os = socket.getOutputStream();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public boolean initialization(String host){
+        Executor executor = Executors.newSingleThreadExecutor();
+        //任务
+        FutureTask<Boolean> future = new FutureTask<>(() -> {
+            try {
+                socket = new Socket(host, 2042);
+                os = socket.getOutputStream();
+                return true;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        //执行
+        executor.execute(future);
+        try{
+            boolean result = future.get(1, TimeUnit.SECONDS);
+            System.out.println(result);
+            return result;
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        return false;
     }
     public boolean connect(){
         JSONObject jsonObject = new JSONObject();
@@ -31,6 +53,36 @@ public class TCPClient {
             e.printStackTrace();
         }
         send(jsonObject);
+        //单线程
+        Executor executor = Executors.newSingleThreadExecutor();
+        //任务
+        FutureTask<Boolean> future = new FutureTask<>(() -> {
+            //按照行读取消息
+            String line;
+            try {
+                //while是抄的写的非常好
+                while ((line = getLine())!= null) {
+                    JSONObject comeBackJson = new JSONObject(line);
+                    return Boolean.parseBoolean(comeBackJson.getString("connect"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+        //执行
+        executor.execute(future);
+        try{
+            boolean result = future.get(1, TimeUnit.SECONDS);
+            System.out.println(result);
+            return result;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private String getLine(){
         //从socket通信管道中得到一个字节输入流
         InputStream is = null;
         try {
@@ -42,20 +94,15 @@ public class TCPClient {
         InputStreamReader isr = new InputStreamReader(is);
         //把字符输入流包装为缓冲字符输入流
         BufferedReader br = new BufferedReader(isr);
-        //按照行读取消息
-        String line;
+        String line = null;
         try {
-            while ((line = br.readLine())!= null){
-                JSONObject comeBackJson = new JSONObject(line);
-                System.out.println(line);
-                System.out.println(Boolean.parseBoolean(comeBackJson.getString("connect")));
-                return Boolean.parseBoolean(comeBackJson.getString("connect"));
-            }
-        }catch (Exception e){
+            line = br.readLine();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return line;
     }
+
     private void send(String json){
         PrintStream ps = new PrintStream(os);
         ps.println(json);

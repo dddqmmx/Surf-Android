@@ -34,7 +34,7 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
     public AdapterMain(Activity activity){
         this.activity = activity;
 
-        Control control = (Control) activity.getApplication();
+        /*Control control = (Control) activity.getApplication();*/
 
         layoutInflater= LayoutInflater.from(activity);
 
@@ -42,7 +42,7 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
 
         LinearLayout messageListLayout = messagesList.findViewById(R.id.message_list);
 
-        List<Message> messageList = control.getGroupList(control.getUserName(),control.getPassword());
+        /*List<Message> messageList = control.getGroupList(control.getUserName(),control.getPassword());
         for (Message message : messageList) {
             View messageView = layoutInflater.inflate(R.layout.view_message,null);
             TextView nameText = messageView.findViewById(R.id.name);
@@ -54,12 +54,12 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
                 chatInteger.putExtra("id",message.getId());
                 activity.startActivity(chatInteger);
             });
-        }
+        }*/
 
 
         View friendsList = layoutInflater.inflate(R.layout.view_friend_list,null);
         LinearLayout friendListLayout = friendsList.findViewById(R.id.friend_list);
-        JSONArray friendList = control.getFriendList(control.getUserName(),control.getPassword());
+        /*JSONArray friendList = control.getFriendList(control.getUserName(),control.getPassword());
         for (int i = 0 ; i < friendList.length(); i++){
             try {
                 View friendView = layoutInflater.inflate(R.layout.view_message,null);
@@ -69,14 +69,14 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
         View myInfo = layoutInflater.inflate(R.layout.view_my_info,null);
-        TextView userName = myInfo.findViewById(R.id.user_name);
+        /*TextView userName = myInfo.findViewById(R.id.user_name);
         userName.setText(control.getUserName());
         TextView name = myInfo.findViewById(R.id.name);
         name.setText(control.getNameByUserName(control.getUserName()));
-
+*/
         viewList.add(messagesList);
         viewList.add(friendsList);
         viewList.add(myInfo);

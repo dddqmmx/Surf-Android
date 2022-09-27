@@ -13,11 +13,16 @@
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp"
         tools:ignore="MissingConstraints">
-
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/msg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            android:layout_height="wrap_content">
+        </Button>
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </TextView>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
