@@ -12,23 +12,35 @@ import org.json.JSONObject;
 public class Server extends Application {
 
     private TCPClient tcpClient;
+
     private UDPClient udpClient;
 
-    private String host = "192.168.5.3";
+    private String host = "192.168.5.4";
+
+    private static String sessionId;
+
+    public static String getSessionId() {
+        return sessionId;
+    }
+
+    public static void setSessionId(String sessionId) {
+         Server.sessionId = sessionId;
+    }
 
     public boolean initialization(){
         tcpClient = new TCPClient();
         udpClient = new UDPClient();
         boolean tcpInitialization = tcpClient.initialization(host);
         udpClient.initialization(host);
+        tcpClient.start();
+
         return tcpInitialization;
     }
 
     public boolean connect(){
         try {
-            if (tcpClient.connect()){
-                return true;
-            }
+            tcpClient.connect();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }

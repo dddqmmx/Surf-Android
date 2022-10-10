@@ -2,7 +2,10 @@ package com.dd.surf;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +15,9 @@ import android.widget.TextView;
 import com.dd.surf.socket.UDPClient;
 
 public class TestActivity extends AppCompatActivity {
-    public Handler mHandler;
+    //public Handler mHandler;
+
+    private ContentReceiver mReceiver;
 
 /*    private final Handler handler=new Handler(){
         public void handleMessage(Message msg) {
@@ -26,10 +31,17 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+        mReceiver = new ContentReceiver();
+        //新添代码，在代码中注册广播接收程序
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.dd.surf.service.tcpClient");
+        registerReceiver(mReceiver, filter);
+
+
+        /*StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 
         setContentView(R.layout.activity_test);
-        TextView textView = (TextView) findViewById(R.id.info);
+        TextView textView = (TextView) findViewById(R.id.info);*/
         /*        try {
             Server server = (Server) getApplication();
             server.initialization();
@@ -41,7 +53,7 @@ public class TestActivity extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }*/
-        WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        //WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         /*Server server = (Server) getApplication();
         server.initialization(wifiManager);
         if (server.connect()) {
@@ -49,8 +61,8 @@ public class TestActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this,"服务器连接失败",Toast.LENGTH_LONG).show();
         }*/
-        UDPClient udpClient = new UDPClient();
-        udpClient.initialization("127.0.0.1");
+        //UDPClient udpClient = new UDPClient();
+        //udpClient.initialization("127.0.0.1");
 
         /*Button button = (Button) findViewById(R.id.msg);
         button.setOnClickListener(new View.OnClickListener() {
@@ -115,4 +127,22 @@ public class TestActivity extends AppCompatActivity {
         Thread tReceived = new Thread(udphelper);
         tReceived.start();*/
     }
+
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        if (mReceiver!=null) {
+            unregisterReceiver(mReceiver);
+        }
+    }
+
+    public static class ContentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String name = intent.getStringExtra("name");
+            System.out.println(name);
+        }
+    }
+
 }

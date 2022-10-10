@@ -1,5 +1,10 @@
 package com.dd.surf.socket;
 
+import android.os.Handler;
+import android.os.Looper;
+
+import com.dd.surf.util.Server;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,16 +23,24 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class TCPClient {
-    Socket socket = null;
-    OutputStream os = null;
+public class TCPClient extends Thread{
+
+    public Socket socket = null;
+    public OutputStream os = null;
+
+    private final int port = 2042;
+
     public boolean initialization(String host){
         Executor executor = Executors.newSingleThreadExecutor();
         //任务
         FutureTask<Boolean> future = new FutureTask<>(() -> {
             try {
-                socket = new Socket(host, 2042);
-                os = socket.getOutputStream();
+                try {
+                    socket = new Socket(host, port);
+                    os = socket.getOutputStream();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return true;
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -44,7 +57,26 @@ public class TCPClient {
         }
         return false;
     }
-    public boolean connect(){
+
+    @Override
+    public void run() {
+        String line = null;
+        try {
+            //while是抄的写的非常好
+            while ((line = getLine()) != null) {
+                System.out.println(line);
+                JSONObject jsonObject = new JSONObject(line);
+                String command = jsonObject.getString("command");
+                if (command.equals("connect")) {
+                    System.out.println("Connect 成功");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void connect(){
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("command","connect");
@@ -53,33 +85,6 @@ public class TCPClient {
             e.printStackTrace();
         }
         send(jsonObject);
-        //单线程
-        Executor executor = Executors.newSingleThreadExecutor();
-        //任务
-        FutureTask<Boolean> future = new FutureTask<>(() -> {
-            //按照行读取消息
-            String line;
-            try {
-                //while是抄的写的非常好
-                while ((line = getLine())!= null) {
-                    JSONObject comeBackJson = new JSONObject(line);
-                    return Boolean.parseBoolean(comeBackJson.getString("connect"));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return false;
-        });
-        //执行
-        executor.execute(future);
-        try{
-            boolean result = future.get(1, TimeUnit.SECONDS);
-            System.out.println(result);
-            return result;
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     private String getLine(){
@@ -103,12 +108,13 @@ public class TCPClient {
         return line;
     }
 
-    private void send(String json){
+    public void send(String json){
         PrintStream ps = new PrintStream(os);
         ps.println(json);
         ps.flush();
     }
-    private void send(Object object){
+    public void send(Object object){
         send(object.toString());
     }
+
 }

@@ -19,12 +19,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Surf">
 
-
+        <service
+            android:name=".service.TCPService"
+            android:enabled="true"
+            android:exported="false"/>
         <service android:name=".service.UpdateChatMessageService" />
+
         <activity
             android:name=".DeveloperOption"
             android:exported="false"
-            android:label="@string/developer_option_title"/>
+            android:label="@string/developer_option_title" />
         <activity
             android:name=".Chat"
             android:exported="false"
@@ -42,12 +46,17 @@
             android:name=".Login"
             android:exported="false"
             android:theme="@style/Theme.login" />
+        <activity android:name=".TestActivity"
+            android:exported="false"
+            android:label="Main"
+            android:theme="@style/Theme.main"/>
         <activity
             android:name=".Load"
             android:exported="true"
             android:theme="@style/Theme.NoTitleFullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
