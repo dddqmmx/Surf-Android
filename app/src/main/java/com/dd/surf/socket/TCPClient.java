@@ -35,21 +35,18 @@ public class TCPClient extends Thread{
         //任务
         FutureTask<Boolean> future = new FutureTask<>(() -> {
             try {
-                try {
-                    socket = new Socket(host, port);
-                    os = socket.getOutputStream();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                socket = new Socket(host, port);
+                os = socket.getOutputStream();
                 return true;
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
+            return false;
         });
         //执行
         executor.execute(future);
         try{
-            boolean result = future.get(1, TimeUnit.SECONDS);
+            boolean result = future.get(10, TimeUnit.SECONDS);
             System.out.println(result);
             return result;
         }catch (Exception e){
