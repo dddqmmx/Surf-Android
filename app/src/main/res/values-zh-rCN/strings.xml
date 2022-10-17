@@ -5,7 +5,7 @@
     <string name="username">用户名</string>
     <string name="password">密码</string>
     <string name="login_title">登录您的账号</string>
-    <string name="login_hint">账号只会保存在本地,不会上传到官方服务器</string>
+    <string name="login_hint">账号只会保存在选择的服务器,如果没有该账号会自动注册</string>
     <string name="server_select">登录服务器  </string>
     <string name="message">消息</string>
     <string name="friend">好友</string>

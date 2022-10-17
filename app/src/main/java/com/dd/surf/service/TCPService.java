@@ -39,6 +39,7 @@ public class TCPService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        System.out.println("create service");
     }
 
     public final class LocalBinder extends Binder {
@@ -69,7 +70,7 @@ public class TCPService extends Service {
         //执行
         executor.execute(future);
         try{
-            boolean result = future.get(10, TimeUnit.SECONDS);
+            boolean result = future.get(1, TimeUnit.SECONDS);
             System.out.println(result);
             return result;
         }catch (Exception e){
@@ -99,7 +100,13 @@ public class TCPService extends Service {
                     JSONObject jsonObject = new JSONObject(line);
                     String command = jsonObject.getString("command");
                     if (command.equals("connect")) {
-                        System.out.println("Connect 成功");
+                        String sessionId = jsonObject.getString("sessionId");
+                        Server.setSessionId(sessionId);
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "connect");
+                        intent.putExtra("value",!"".equals(sessionId));
+                        sendContent(intent);
                     }
                 }
             }catch (Exception e){
@@ -113,6 +120,18 @@ public class TCPService extends Service {
         try {
             jsonObject.put("command","connect");
             jsonObject.put("system","android");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void login(String userName, String userPass){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","login");
+            jsonObject.put("userName",userName);
+            jsonObject.put("userPass",userPass);
         } catch (JSONException e) {
             e.printStackTrace();
         }

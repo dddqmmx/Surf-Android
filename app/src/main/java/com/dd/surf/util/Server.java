@@ -15,7 +15,7 @@ public class Server extends Application {
 
     private UDPClient udpClient;
 
-    public static String host = "192.168.5.50";
+    public static String host = "192.168.5.6";
 
     public static String sessionId;
 
@@ -36,14 +36,5 @@ public class Server extends Application {
         return tcpInitialization;
     }*/
 
-    public boolean connect(){
-        try {
-            tcpClient.connect();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
 }

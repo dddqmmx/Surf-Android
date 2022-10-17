@@ -81,7 +81,6 @@ public class Load extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((LocalBinder) binder).getService();
             service.initialization();
-            service.connect();
         }
 
         @Override
@@ -102,7 +101,7 @@ public class Load extends AppCompatActivity {
         }
     }
 
-    public static class ContentReceiver extends BroadcastReceiver {
+    public class ContentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String command = intent.getStringExtra("command");
@@ -112,8 +111,19 @@ public class Load extends AppCompatActivity {
                     booleanValue = intent.getBooleanExtra("value", false);
                     if (booleanValue){
                         makeText(context,"初始化成功", LENGTH_LONG).show();
+                        service.connect();
                     } else {
                         makeText(context,"初始失败", LENGTH_LONG).show();
+                    }
+                    break;
+                case "connect":
+                    booleanValue = intent.getBooleanExtra("value", false);
+                    if (booleanValue) {
+                        makeText(context,"服务器连接成功", LENGTH_LONG).show();
+                        context.startActivity(new Intent(Load.this,Login.class));
+                        Load.this.finish();
+                    } else {
+                        makeText(context,"服务器连接失败", LENGTH_LONG).show();
                     }
                     break;
             }
