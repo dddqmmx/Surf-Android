@@ -89,6 +89,11 @@ public class Login extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String command = intent.getStringExtra("command");
             switch (command) {
+                case "login":
+                    makeText(context,"登录成功", LENGTH_LONG).show();
+                    context.startActivity(new Intent(Login.this,Main.class));
+                    Login.this.finish();
+                    break;
             }
         }
     }

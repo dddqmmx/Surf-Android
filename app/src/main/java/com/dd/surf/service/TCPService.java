@@ -3,8 +3,10 @@ package com.dd.surf.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 
+import com.dd.surf.pojo.User;
 import com.dd.surf.socket.TCPClient;
 import com.dd.surf.util.Server;
 
@@ -12,12 +14,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -99,13 +107,18 @@ public class TCPService extends Service {
                     System.out.println(line);
                     JSONObject jsonObject = new JSONObject(line);
                     String command = jsonObject.getString("command");
-                    if (command.equals("connect")) {
+                    if ("connect".equals(command)) {
                         String sessionId = jsonObject.getString("sessionId");
                         Server.setSessionId(sessionId);
                         Intent intent=new Intent();
                         intent.setAction("com.dd.surf.service.tcpClient");
                         intent.putExtra("command", "connect");
                         intent.putExtra("value",!"".equals(sessionId));
+                        sendContent(intent);
+                    } else if("login".equals(command)) {
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "login");
                         sendContent(intent);
                     }
                 }
@@ -126,12 +139,12 @@ public class TCPService extends Service {
         send(jsonObject);
     }
 
-    public void login(String userName, String userPass){
+    public void login(String userName, String password){
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("command","login");
             jsonObject.put("userName",userName);
-            jsonObject.put("userPass",userPass);
+            jsonObject.put("password",password);
         } catch (JSONException e) {
             e.printStackTrace();
         }
