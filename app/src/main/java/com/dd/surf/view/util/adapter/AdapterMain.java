@@ -35,6 +35,9 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
     public TextView userName;
     public TextView name;
 
+    public LinearLayout messageListLayout;
+    public LinearLayout friendListLayout;
+
     public AdapterMain(Activity activity, TCPService service){
         this.activity = activity;
 
@@ -45,43 +48,35 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
 
         View messagesList = layoutInflater.inflate(R.layout.view_message_list,null);
 
-        LinearLayout messageListLayout = messagesList.findViewById(R.id.message_list);
-
-        /*List<Message> messageList = control.getGroupList(control.getUserName(),control.getPassword());
-        for (Message message : messageList) {
-            View messageView = layoutInflater.inflate(R.layout.view_message,null);
-            TextView nameText = messageView.findViewById(R.id.name);
-            nameText.setText(message.getName());
-            messageListLayout.addView(messageView);
-            messageView.setOnClickListener((view)->{
-                Intent chatInteger = new Intent(activity, TestActivity.class);
-                chatInteger.putExtra("type",message.getType());
-                chatInteger.putExtra("id",message.getId());
-                activity.startActivity(chatInteger);
-            });
-        }*/
-
-
+        messageListLayout = messagesList.findViewById(R.id.message_list);
         View friendsList = layoutInflater.inflate(R.layout.view_friend_list,null);
-        LinearLayout friendListLayout = friendsList.findViewById(R.id.friend_list);
-        /*JSONArray friendList = control.getFriendList(control.getUserName(),control.getPassword());
-        for (int i = 0 ; i < friendList.length(); i++){
-            try {
-                View friendView = layoutInflater.inflate(R.layout.view_message,null);
-                TextView nameText = friendView.findViewById(R.id.name);
-                nameText.setText(control.getNameById((int) friendList.get(i)));
-                friendListLayout.addView(friendView);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }*/
-
+        friendListLayout = friendsList.findViewById(R.id.friend_list);
         View myInfo = layoutInflater.inflate(R.layout.view_my_info,null);
         userName = myInfo.findViewById(R.id.user_name);
         name = myInfo.findViewById(R.id.name);
         viewList.add(messagesList);
         viewList.add(friendsList);
         viewList.add(myInfo);
+    }
+
+    public void addGroup(int id,String groupName){
+        View messageView = layoutInflater.inflate(R.layout.view_message,null);
+        TextView nameText = messageView.findViewById(R.id.name);
+        nameText.setText(groupName);
+        messageListLayout.addView(messageView);
+        messageView.setOnClickListener((view)->{
+            Intent chatInteger = new Intent(activity, TestActivity.class);
+            chatInteger.putExtra("type",1);
+            chatInteger.putExtra("id",id);
+            activity.startActivity(chatInteger);
+        });
+    }
+
+    public void addFriend(int id,String name){
+        View friendView = layoutInflater.inflate(R.layout.view_message,null);
+        TextView nameText = friendView.findViewById(R.id.name);
+        nameText.setText(name);
+        friendListLayout.addView(friendView);
     }
 
     @NonNull

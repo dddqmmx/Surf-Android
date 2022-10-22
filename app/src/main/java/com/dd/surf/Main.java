@@ -26,6 +26,10 @@ import com.dd.surf.view.util.adapter.AdapterMain;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Main extends AppCompatActivity {
 
     LayoutInflater layoutInflater = null;
@@ -110,6 +114,8 @@ public class Main extends AppCompatActivity {
             tabLayoutMediator.attach();
 
             service.getUserInfo();
+            service.getGroupList();
+            service.getUserFriend();
         }
 
         @Override
@@ -133,14 +139,43 @@ public class Main extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String command = intent.getStringExtra("command");
+            String userName = null;
+            String name = null;
             switch (command) {
                 case "getUserInfo":
-                    String userName = intent.getStringExtra("userName");
-                    String name = intent.getStringExtra("name");
+                    userName = intent.getStringExtra("userName");
+                    name = intent.getStringExtra("name");
                     System.out.println(userName);
                     System.out.println(name);
                     adapterMain.name.setText(name);
                     adapterMain.userName.setText(userName);
+                    break;
+                case "getGroupList":
+                    try {
+                        JSONArray groupList = new JSONArray(intent.getStringExtra("groupList"));
+                        for (int i = 0; i < groupList.length(); i++) {
+                            JSONObject jsonObject = groupList.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            String groupName = jsonObject.getString("groupName");
+                            adapterMain.addGroup(id,groupName);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "getUserFriendList":
+                    try {
+                        JSONArray groupList = new JSONArray(intent.getStringExtra("userList"));
+                        for (int i = 0; i < groupList.length(); i++) {
+                            JSONObject jsonObject = groupList.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            userName = jsonObject.getString("userName");
+                            name = jsonObject.getString("name");
+                            adapterMain.addFriend(id,name);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
         }

@@ -10,6 +10,7 @@ import com.dd.surf.pojo.User;
 import com.dd.surf.socket.TCPClient;
 import com.dd.surf.util.Server;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -129,6 +130,20 @@ public class TCPService extends Service {
                         intent.putExtra("userName", userName);
                         intent.putExtra("name",name);
                         sendContent(intent);
+                    } else if ("getGroupList".equals(command)) {
+                        JSONArray groupList = jsonObject.getJSONArray("groupList");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getGroupList");
+                        intent.putExtra("groupList",groupList.toString());
+                        sendContent(intent);
+                    } else if ("getUserFriendList".equals(command)){
+                        JSONArray userList = jsonObject.getJSONArray("userList");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getUserFriendList");
+                        intent.putExtra("userList",userList.toString());
+                        sendContent(intent);
                     }
                 }
             }catch (Exception e){
@@ -171,6 +186,26 @@ public class TCPService extends Service {
             if (userId != null) {
                 jsonObject.put("userId", userId);
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void getGroupList(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getGroupList");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void getUserFriend(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getUserFriendList");
         } catch (JSONException e) {
             e.printStackTrace();
         }
