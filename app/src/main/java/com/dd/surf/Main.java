@@ -39,6 +39,10 @@ public class Main extends AppCompatActivity {
 
     private ContentReceiver mReceiver;
 
+    public AdapterMain adapterMain;
+    public TabLayoutMediator tabLayoutMediator;
+    public ViewPager2 viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,16 +74,13 @@ public class Main extends AppCompatActivity {
             actionBar.show();
         }
 
-        ViewPager2 viewPager = findViewById(R.id.view_pager);
-        AdapterMain adapterMain = new AdapterMain(this,service);
-        viewPager.setAdapter(adapterMain);
+        viewPager = findViewById(R.id.view_pager);
         TabLayout tabLayout = findViewById(R.id.footTab);
 
-        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+        tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             tab.setText(texts[position]);
             tab.setIcon(icons[position]);
         });
-        tabLayoutMediator.attach();
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -103,6 +104,11 @@ public class Main extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
+
+            adapterMain = new AdapterMain(Main.this,service);
+            viewPager.setAdapter(adapterMain);
+            tabLayoutMediator.attach();
+
             service.getUserInfo();
         }
 
@@ -133,6 +139,8 @@ public class Main extends AppCompatActivity {
                     String name = intent.getStringExtra("name");
                     System.out.println(userName);
                     System.out.println(name);
+                    adapterMain.name.setText(name);
+                    adapterMain.userName.setText(userName);
                     break;
             }
         }

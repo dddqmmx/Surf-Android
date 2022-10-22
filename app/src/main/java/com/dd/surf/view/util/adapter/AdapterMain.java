@@ -32,8 +32,12 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
     List<View> viewList = new ArrayList<>();
     LayoutInflater layoutInflater;
 
-    public AdapterMain(Activity activity, TCPService tcpService){
+    public TextView userName;
+    public TextView name;
+
+    public AdapterMain(Activity activity, TCPService service){
         this.activity = activity;
+
 
         /*Control control = (Control) activity.getApplication();*/
 
@@ -73,11 +77,8 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         }*/
 
         View myInfo = layoutInflater.inflate(R.layout.view_my_info,null);
-        /*TextView userName = myInfo.findViewById(R.id.user_name);
-        userName.setText(control.getUserName());
-        TextView name = myInfo.findViewById(R.id.name);
-        name.setText(control.getNameByUserName(control.getUserName()));
-*/
+        userName = myInfo.findViewById(R.id.user_name);
+        name = myInfo.findViewById(R.id.name);
         viewList.add(messagesList);
         viewList.add(friendsList);
         viewList.add(myInfo);
