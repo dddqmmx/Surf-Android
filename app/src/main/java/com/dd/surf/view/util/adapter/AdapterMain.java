@@ -16,6 +16,7 @@ import com.dd.surf.Chat;
 import com.dd.surf.R;
 import com.dd.surf.TestActivity;
 import com.dd.surf.entity.Message;
+import com.dd.surf.service.TCPService;
 import com.dd.surf.util.Control;
 
 import org.json.JSONArray;
@@ -31,7 +32,7 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
     List<View> viewList = new ArrayList<>();
     LayoutInflater layoutInflater;
 
-    public AdapterMain(Activity activity){
+    public AdapterMain(Activity activity, TCPService tcpService){
         this.activity = activity;
 
         /*Control control = (Control) activity.getApplication();*/

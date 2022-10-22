@@ -1,6 +1,16 @@
 package com.dd.surf;
 
+import static android.widget.Toast.LENGTH_LONG;
+import static android.widget.Toast.makeText;
+
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -10,6 +20,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.dd.surf.service.TCPService;
+import com.dd.surf.util.Server;
 import com.dd.surf.view.util.adapter.AdapterMain;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -22,11 +34,27 @@ public class Main extends AppCompatActivity {
     int[] icons = {R.drawable.message,R.drawable.contact,R.drawable.person};
     int[] texts = {R.string.message,R.string.friend,R.string.my_info};
 
+    private MyServiceConn conn;
+    private TCPService service;
+
+    private ContentReceiver mReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        Server server = (Server) getApplication();
+
+        conn=new MyServiceConn();
+        bindService(new Intent(Main.this, TCPService.class), conn, BIND_AUTO_CREATE);
+
+        mReceiver = new ContentReceiver();
+        //新添代码，在代码中注册广播接收程序
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.dd.surf.service.tcpClient");
+        registerReceiver(mReceiver, filter);
 
         layoutInflater = getLayoutInflater();
 
@@ -43,7 +71,7 @@ public class Main extends AppCompatActivity {
         }
 
         ViewPager2 viewPager = findViewById(R.id.view_pager);
-        AdapterMain adapterMain = new AdapterMain(this);
+        AdapterMain adapterMain = new AdapterMain(this,service);
         viewPager.setAdapter(adapterMain);
         TabLayout tabLayout = findViewById(R.id.footTab);
 
@@ -68,5 +96,45 @@ public class Main extends AppCompatActivity {
 
             }
         });
+    }
+
+    public class MyServiceConn implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            service = ((TCPService.LocalBinder) binder).getService();
+            service.getUserInfo();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            // TODO Auto-generated method stub
+            service = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        unbindService(conn);
+        if (mReceiver!=null) {
+            unregisterReceiver(mReceiver);
+        }
+    }
+
+    public class ContentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String command = intent.getStringExtra("command");
+            switch (command) {
+                case "getUserInfo":
+                    String userName = intent.getStringExtra("userName");
+                    String name = intent.getStringExtra("name");
+                    System.out.println(userName);
+                    System.out.println(name);
+                    break;
+            }
+        }
     }
 }
