@@ -78,6 +78,8 @@ public class TCPService extends Service {
         });
         //执行
         executor.execute(future);
+
+        System.out.println("tcpInitialization");
         try{
             boolean result = future.get(1, TimeUnit.SECONDS);
             System.out.println(result);

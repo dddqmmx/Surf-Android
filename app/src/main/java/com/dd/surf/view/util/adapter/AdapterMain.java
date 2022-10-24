@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dd.surf.Chat;
+import com.dd.surf.Main;
 import com.dd.surf.R;
 import com.dd.surf.TestActivity;
 import com.dd.surf.entity.Message;
@@ -65,7 +66,7 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         nameText.setText(groupName);
         messageListLayout.addView(messageView);
         messageView.setOnClickListener((view)->{
-            Intent chatInteger = new Intent(activity, TestActivity.class);
+            Intent chatInteger = new Intent(activity, Chat.class);
             chatInteger.putExtra("type",1);
             chatInteger.putExtra("id",id);
             activity.startActivity(chatInteger);

@@ -121,7 +121,7 @@ public class Load extends AppCompatActivity {
                     if (booleanValue) {
                         makeText(context,"服务器连接成功", LENGTH_LONG).show();
                         context.startActivity(new Intent(Load.this,Login.class));
-                        Load.this.finish();
+                        //Load.this.finish();
                     } else {
                         makeText(context,"服务器连接失败", LENGTH_LONG).show();
                     }
