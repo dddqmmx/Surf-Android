@@ -41,6 +41,9 @@ public class Chat extends AppCompatActivity {
 
     private ContentReceiver mReceiver;
 
+    private int type;
+    private int id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +51,8 @@ public class Chat extends AppCompatActivity {
         layoutInflater = getLayoutInflater();
 
         Intent intent = getIntent();
-        int type = intent.getIntExtra("type",0);
-        int id = intent.getIntExtra("id",0);
+        type = intent.getIntExtra("type",0);
+        id = intent.getIntExtra("id",0);
 
         /*control = (Control) getApplication();*/
 
@@ -169,6 +172,9 @@ public class Chat extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
             /*service.initialization();*/
+            if (type == 1){
+                service.getGroupInfo(id);
+            }
         }
 
         @Override

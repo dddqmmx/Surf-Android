@@ -214,6 +214,17 @@ public class TCPService extends Service {
         send(jsonObject);
     }
 
+    public void getGroupInfo(int groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getGroupInfo");
+            jsonObject.put("groupId",groupId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
     /**
      * 发送广播
      */
