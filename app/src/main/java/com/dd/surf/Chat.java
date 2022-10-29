@@ -26,6 +26,10 @@ import com.dd.surf.service.UpdateChatMessageService;
 import com.dd.surf.util.Control;
 import com.dd.surf.view.util.Out;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class Chat extends AppCompatActivity {
@@ -142,14 +146,14 @@ public class Chat extends AppCompatActivity {
         });
         messageUpdateThread.start();*/
 
-        addMessageText(1,"我是傻逼");
+/*        addMessageText(1,"我是傻逼");
         addMessageText(2,"我也是傻逼");
         addMessageText(3,"👀👀👀");
-        addMessageText(4,"扣1送原神6480");
+        addMessageText(4,"扣1送原神6480");*/
 
     }
 
-    public void addMessageText(int id,String text){
+    protected void addMessageText(int id,String text){
         View messageView = null;
         /*if (id != control.getId())
             messageView = layoutInflater.inflate(R.layout.view_message_a, null);
@@ -174,6 +178,7 @@ public class Chat extends AppCompatActivity {
             /*service.initialization();*/
             if (type == 1){
                 service.getGroupInfo(id);
+                service.getGroupMessage(id);
             }
         }
 
@@ -204,6 +209,22 @@ public class Chat extends AppCompatActivity {
                 case "getGroupInfo":
                     String groupName = intent.getStringExtra("groupName");
                     titleText.setText(groupName);
+                    break;
+                case "getGroupMessage":
+                    JSONArray groupList = null;
+                    try {
+                        groupList = new JSONArray(intent.getStringExtra("messageList"));
+                        for (int i = 0; i < groupList.length(); i++) {
+                            JSONObject jsonObject = groupList.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            int senderId = jsonObject.getInt("senderId");
+                            String message = jsonObject.getString("message");
+                            addMessageText(senderId,message);
+                        }
+                        break;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
         }

@@ -153,6 +153,13 @@ public class TCPService extends Service {
                         intent.putExtra("command", "getGroupInfo");
                         intent.putExtra("groupName", groupName);
                         sendContent(intent);
+                    } else if ("getGroupMessage".equals(command)){
+                        JSONArray messageList = jsonObject.getJSONArray("messageList");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getGroupMessage");
+                        intent.putExtra("messageList",messageList.toString());
+                        sendContent(intent);
                     }
                 }
             }catch (Exception e){
@@ -225,6 +232,17 @@ public class TCPService extends Service {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("command","getGroupInfo");
+            jsonObject.put("groupId",groupId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void getGroupMessage(int groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getGroupMessage");
             jsonObject.put("groupId",groupId);
         } catch (JSONException e) {
             e.printStackTrace();
