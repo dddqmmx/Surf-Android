@@ -146,6 +146,13 @@ public class TCPService extends Service {
                         intent.putExtra("command", "getUserFriendList");
                         intent.putExtra("userList",userList.toString());
                         sendContent(intent);
+                    } else if ("getGroupInfo".equals(command)){
+                        String groupName = jsonObject.getString("groupName");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getGroupInfo");
+                        intent.putExtra("groupName", groupName);
+                        sendContent(intent);
                     }
                 }
             }catch (Exception e){

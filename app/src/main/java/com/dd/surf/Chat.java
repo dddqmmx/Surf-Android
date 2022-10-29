@@ -201,6 +201,10 @@ public class Chat extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String command = intent.getStringExtra("command");
             switch (command) {
+                case "getGroupInfo":
+                    String groupName = intent.getStringExtra("groupName");
+                    titleText.setText(groupName);
+                    break;
             }
         }
     }

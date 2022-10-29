@@ -15,7 +15,7 @@ public class Server extends Application {
 
     private UDPClient udpClient;
 
-    public static String host = "192.168.5.13";
+    public static String host = "192.168.5.18";
 
     public static String sessionId;
 
