@@ -20,6 +20,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
 import com.dd.surf.util.Server;
 import com.dd.surf.view.util.adapter.AdapterMain;
@@ -108,6 +109,7 @@ public class Main extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
+            Server.setTcpService(service);
 
             adapterMain = new AdapterMain(Main.this,service);
             viewPager.setAdapter(adapterMain);
@@ -143,12 +145,9 @@ public class Main extends AppCompatActivity {
             String name = null;
             switch (command) {
                 case "getUserInfo":
-                    userName = intent.getStringExtra("userName");
-                    name = intent.getStringExtra("name");
-                    System.out.println(userName);
-                    System.out.println(name);
-                    adapterMain.name.setText(name);
-                    adapterMain.userName.setText(userName);
+                    User user = Server.getUser(Server.userId);
+                    adapterMain.name.setText(user.getName());
+                    adapterMain.userName.setText(user.getUserName());
                     break;
                 case "getGroupList":
                     try {

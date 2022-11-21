@@ -1,11 +1,6 @@
 package com.dd.surf;
 
-import static android.widget.Toast.LENGTH_LONG;
-import static android.widget.Toast.makeText;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,21 +10,28 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.dd.surf.entity.ChatMessage;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
-import com.dd.surf.service.UpdateChatMessageService;
-import com.dd.surf.util.Control;
-import com.dd.surf.view.util.Out;
+import com.dd.surf.util.Server;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Chat extends AppCompatActivity {
@@ -48,6 +50,8 @@ public class Chat extends AppCompatActivity {
     private int type;
     private int id;
 
+    private List<Integer> getUserIdList = new ArrayList<>();
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +91,20 @@ public class Chat extends AppCompatActivity {
         filter.addAction("com.dd.surf.service.tcpClient");
         registerReceiver(mReceiver, filter);
 
+        ScrollView scrollView = findViewById(R.id.messageScroll);
         messageList = findViewById(R.id.message_list);
+
+
+        EditText messageEditText = findViewById(R.id.messageEditText);
+        messageEditText.setOnClickListener(v -> {
+
+        });
+        Button sendButton = findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(v -> {
+            int userId = Server.userId;
+            addMessageText(userId,messageEditText.getText().toString());
+            messageEditText.setText("");
+        });
 
 /*        rowCount = control.getMessageCount(type,id);
         if (rowCount <= 20){
@@ -148,21 +165,29 @@ public class Chat extends AppCompatActivity {
 
 /*        addMessageText(1,"我是傻逼");
         addMessageText(2,"我也是傻逼");
-        addMessageText(3,"👀👀👀");
+        a1ddMessageText(3,"👀👀👀");
         addMessageText(4,"扣1送原神6480");*/
 
     }
 
     protected void addMessageText(int id,String text){
         View messageView = null;
-        /*if (id != control.getId())
+        if (id != Server.userId)
             messageView = layoutInflater.inflate(R.layout.view_message_a, null);
         else{
             messageView = layoutInflater.inflate(R.layout.view_message_b,null);
-        }*/
-        messageView = layoutInflater.inflate(R.layout.view_message_b,null);
+        }
+        messageView.setContentDescription(String.valueOf(id));
         TextView nameView = messageView.findViewById(R.id.name);
-        nameView.setText(""+id);
+        if (Server.hasUser(id)){
+            User user = Server.getUser(id);
+            nameView.setText(user.getName());
+        }else{
+            if (!getUserIdList.contains(id)){
+                Server.getUserInfo(id);
+                getUserIdList.add(id);
+            }
+        }
         LinearLayout linearLayout = messageView.findViewById(R.id.msgList);
         TextView textView = new TextView(this);
         textView.setText(text);
@@ -218,12 +243,26 @@ public class Chat extends AppCompatActivity {
                             JSONObject jsonObject = groupList.getJSONObject(i);
                             int id = jsonObject.getInt("id");
                             int senderId = jsonObject.getInt("senderId");
+                            /*String senderName = jsonObject.getString("senderName");*/
                             String message = jsonObject.getString("message");
                             addMessageText(senderId,message);
                         }
                         break;
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    }
+                    break;
+                case "getUserInfoById":
+                    int id = intent.getIntExtra("id",0);
+                    String name = intent.getStringExtra("name");
+                    for (int i = 0 ; i < messageList.getChildCount();i++){
+                        View child = messageList.getChildAt(i);
+                        if (child.getId() == R.id.message){
+                            if (child.getContentDescription() == String.valueOf(id)){
+                                TextView nameView = child.findViewById(R.id.name);
+                                nameView.setText(name);
+                            }
+                        }
                     }
                     break;
             }

@@ -90,6 +90,29 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/quit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp">
+
+            <ImageView
+                android:id="@+id/quitImage"
+                android:layout_centerVertical="true"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/power"/>
+
+            <TextView
+                android:layout_marginStart="20dp"
+                android:layout_toEndOf="@id/quitImage"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/quit"/>
+
+        </RelativeLayout>
+
     </LinearLayout>
 
 </LinearLayout>

@@ -7,15 +7,21 @@
     android:layout_weight="0"
     tools:context=".Chat">
 
-    <LinearLayout
-        android:id="@+id/message_list"
+    <ScrollView
+        android:id="@+id/messageScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/toolbar"
-        android:background="#EBEDF5"
-        android:orientation="vertical">
-
-    </LinearLayout>
+        android:fillViewport="true">
+        <LinearLayout
+            android:id="@+id/message_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F1F1F1"
+            android:orientation="vertical"
+            tools:ignore="RtlSymmetry">
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/toolbar"
@@ -23,20 +29,22 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="#EBEDF5"
+        android:background="#F7F7F7
+"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <EditText
+                android:id="@+id/messageEditText"
                 android:layout_weight="1"
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="@drawable/edit_text"/>
             <Button
+                android:id="@+id/sendButton"
                 android:layout_weight="2"
                 android:layout_width="220dp"
                 android:layout_height="match_parent"
@@ -45,6 +53,41 @@
                 style="?android:attr/borderlessButtonStyle"
             android:text="@string/send">
             </Button>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_weight="2"
+                android:src="@drawable/mic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="ContentDescription">
+            </ImageView>
+            <ImageView
+                android:layout_weight="2"
+                android:src="@drawable/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="ContentDescription">
+            </ImageView>
+            <ImageView
+                android:layout_weight="2"
+                android:src="@drawable/camera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="ContentDescription">
+            </ImageView>
+            <ImageView
+                android:layout_weight="2"
+                android:src="@drawable/sentiment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="ContentDescription">
+            </ImageView>
         </LinearLayout>
     </LinearLayout>
 

@@ -21,6 +21,7 @@
     <string name="send">发送</string>
     <string name="developer_option_title">开发者选项</string>
     <string name="toMainButton">跳转MainActivity</string>
+    <string name="quit">退出</string>
 
     <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
         <item>官方服务器</item>

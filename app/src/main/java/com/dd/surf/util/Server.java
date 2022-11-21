@@ -3,19 +3,50 @@ package com.dd.surf.util;
 import android.app.Application;
 import android.net.wifi.WifiManager;
 
+import com.dd.surf.pojo.User;
+import com.dd.surf.service.TCPService;
 import com.dd.surf.socket.TCPClient;
 import com.dd.surf.socket.UDPClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class Server extends Application {
 
-    private TCPClient tcpClient;
+    private static TCPService tcpService;
 
-    private UDPClient udpClient;
+    public static TCPService getTcpService() {
+        return tcpService;
+    }
 
-    public static String host = "192.168.5.18";
+    public static void setTcpService(TCPService tcpService) {
+        Server.tcpService = tcpService;
+    }
+
+    public static int userId;
+
+    public static HashMap<Integer,User> userHashMap = new HashMap<>();
+
+    public static boolean hasUser(int userId) {
+        return userHashMap.containsKey(userId);
+    }
+
+    public static void getUserInfo(int userId) {
+        tcpService.getUserInfoById(userId);
+    }
+
+    public static User getUser(int userId) {
+        return userHashMap.get(userId);
+    }
+
+    public static void addUser(int userId, User user) {
+        userHashMap.put(userId, user);
+    }
+
+    public static String host = "192.168.5.6";
 
     public static String sessionId;
 
@@ -26,15 +57,5 @@ public class Server extends Application {
     public static void setSessionId(String sessionId) {
          Server.sessionId = sessionId;
     }
-/*
-    public boolean initialization(){
-        udpClient = new UDPClient();
-        boolean tcpInitialization = tcpClient.initialization(host);
-        udpClient.initialization(host);
-        tcpClient.start();
-
-        return tcpInitialization;
-    }*/
-
 
 }

@@ -1,6 +1,8 @@
 package com.dd.surf.view.util.adapter;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +57,12 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         View myInfo = layoutInflater.inflate(R.layout.view_my_info,null);
         userName = myInfo.findViewById(R.id.user_name);
         name = myInfo.findViewById(R.id.name);
+        View quit = myInfo.findViewById(R.id.quit);
+        quit.setOnClickListener(v -> {
+            activity.finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(0);
+        });
         viewList.add(messagesList);
         viewList.add(friendsList);
         viewList.add(myInfo);

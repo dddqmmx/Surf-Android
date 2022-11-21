@@ -20,6 +20,7 @@
     <string name="send">Send</string>
     <string name="developer_option_title">Developer Option Title</string>
     <string name="toMainButton">toMainActivityButton</string>
+    <string name="quit">Quit</string>
 
     <string-array name="default_server_arrays">
         <item>official server</item>
