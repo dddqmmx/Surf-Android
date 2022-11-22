@@ -47,8 +47,8 @@ public class Chat extends AppCompatActivity {
 
     private ContentReceiver mReceiver;
 
-    private int type;
-    private int id;
+    public int type;
+    public int id;
 
     private List<Integer> getUserIdList = new ArrayList<>();
     
@@ -101,9 +101,13 @@ public class Chat extends AppCompatActivity {
         });
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(v -> {
-            int userId = Server.userId;
-            addMessageText(userId,messageEditText.getText().toString());
-            messageEditText.setText("");
+            String messageText = messageEditText.getText().toString();
+            if (!messageText.equals("")) {
+                int userId = Server.userId;
+                addMessageText(userId,messageText);
+                service.sendTextMessage(type,id,messageText);
+                messageEditText.setText("");
+            }
         });
 
 /*        rowCount = control.getMessageCount(type,id);
@@ -265,6 +269,18 @@ public class Chat extends AppCompatActivity {
                         }
                     }
                     break;
+                case "GroupMessage":
+                    if (type == 1){
+                        int contactId = intent.getIntExtra("contactId",0);
+                        Chat chat = (Chat) context;
+                        System.out.println(""+chat.id);
+                        if (contactId == chat.id){
+                            int senderId = intent.getIntExtra("sender",0);
+                            /*String senderName = jsonObject.getString("senderName");*/
+                            String message = intent.getStringExtra("message");
+                            addMessageText(senderId,message);
+                        }
+                    }
             }
         }
     }

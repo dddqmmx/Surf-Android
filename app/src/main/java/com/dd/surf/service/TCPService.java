@@ -183,6 +183,20 @@ public class TCPService extends Service {
                         intent.putExtra("userName",user.getUserName());
                         intent.putExtra("name",user.getName());
                         sendContent(intent);
+                    } else if ("processMessage".equals(command)){
+                        int sender = jsonObject.getInt("sender");
+                        String message = jsonObject.getString("message");
+                        int contactType = jsonObject.getInt("contactType");
+                        int contactId = jsonObject.getInt("contactId");
+                        if (contactType == 1){
+                            Intent intent=new Intent();
+                            intent.setAction("com.dd.surf.service.tcpClient");
+                            intent.putExtra("command", "GroupMessage");
+                            intent.putExtra("contactId",contactId);
+                            intent.putExtra("sender",sender);
+                            intent.putExtra("message",message);
+                            sendContent(intent);
+                        }
                     }
                 }
             }catch (Exception e){
@@ -277,8 +291,17 @@ public class TCPService extends Service {
         send(jsonObject);
     }
 
-    public void sendTextMessage(int senderId, int contactType , int contactId , String message){
-
+    public void sendTextMessage(int contactType , int contactId , String message){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","sendTextMessage");
+            jsonObject.put("contactType",contactType);
+            jsonObject.put("contactId",contactId);
+            jsonObject.put("message",message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
     }
 
     /**
