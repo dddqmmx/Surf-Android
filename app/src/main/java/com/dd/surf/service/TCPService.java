@@ -23,7 +23,9 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -37,7 +39,6 @@ public class TCPService extends Service {
     public Thread tcpThread = null;
 
     public Socket socket = null;
-    public OutputStream os = null;
 
     private final int port = 2042;
 
@@ -69,7 +70,6 @@ public class TCPService extends Service {
         FutureTask<Boolean> future = new FutureTask<>(() -> {
             try {
                 socket = new Socket(host, port);
-                os = socket.getOutputStream();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -313,9 +313,14 @@ public class TCPService extends Service {
     }
 
     public void send(String json){
-        PrintStream ps = new PrintStream(os);
-        ps.println(json);
-        ps.flush();
+        try {
+            OutputStreamWriter outputStream = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
+            PrintWriter printWriter = new PrintWriter(outputStream,true);
+            printWriter.println(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     public void send(Object object){
         send(object.toString());
@@ -330,7 +335,7 @@ public class TCPService extends Service {
             e.printStackTrace();
         }
         //把字节输入流转换成字符输入流
-        InputStreamReader isr = new InputStreamReader(is);
+        InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
         //把字符输入流包装为缓冲字符输入流
         BufferedReader br = new BufferedReader(isr);
         String line = null;

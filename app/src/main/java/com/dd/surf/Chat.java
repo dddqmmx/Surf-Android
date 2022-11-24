@@ -101,12 +101,16 @@ public class Chat extends AppCompatActivity {
         });
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(v -> {
-            String messageText = messageEditText.getText().toString();
-            if (!messageText.equals("")) {
-                int userId = Server.userId;
-                addMessageText(userId,messageText);
-                service.sendTextMessage(type,id,messageText);
-                messageEditText.setText("");
+            try {
+                String messageText = messageEditText.getText().toString();
+                if (!messageText.equals("")) {
+                    int userId = Server.userId;
+                    addMessageText(userId,messageText);
+                    service.sendTextMessage(type,id,messageText);
+                    messageEditText.setText("");
+                }
+            }catch (Exception e) {
+                Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
             }
         });
 
