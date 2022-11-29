@@ -119,14 +119,14 @@ public class TCPService extends Service {
                         intent.putExtra("value",!"".equals(sessionId));
                         sendContent(intent);
                     } else if("login".equals(command)) {
-                        String login = jsonObject.getString("login");
-                        if ("true".equals(login)) {
-                            Server.userId = jsonObject.getInt("id");
-                            Intent intent=new Intent();
-                            intent.setAction("com.dd.surf.service.tcpClient");
-                            intent.putExtra("command", "login");
-                            sendContent(intent);
-                        }
+                        boolean login = jsonObject.getBoolean("login");
+                        String message = jsonObject.getString("message");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "login");
+                        intent.putExtra("login", login);
+                        intent.putExtra("message", message);
+                        sendContent(intent);
                     } else if ("getUserInfo".equals(command)) {
                         String userName = jsonObject.getString("userName");
                         String name = jsonObject.getString("name");

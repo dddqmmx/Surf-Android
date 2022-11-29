@@ -90,9 +90,15 @@ public class Login extends AppCompatActivity {
             String command = intent.getStringExtra("command");
             switch (command) {
                 case "login":
-                    makeText(context,"登录成功", LENGTH_LONG).show();
-                    context.startActivity(new Intent(Login.this,Main.class));
-                    Login.this.finish();
+                    boolean login = intent.getBooleanExtra("login",false);
+                    String message = intent.getStringExtra("message");
+                    if (login) {
+                        makeText(context,message, LENGTH_LONG).show();
+                        context.startActivity(new Intent(Login.this,Main.class));
+                        Login.this.finish();
+                    }else {
+                        makeText(context,"登录失败"+message, LENGTH_LONG).show();
+                    }
                     break;
             }
         }

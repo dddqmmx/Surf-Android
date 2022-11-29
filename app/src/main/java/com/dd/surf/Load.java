@@ -114,17 +114,18 @@ public class Load extends AppCompatActivity {
                         service.connect();
                     } else {
                         makeText(context,"初始失败", LENGTH_LONG).show();
+                        context.startActivity(new Intent(Load.this,Login.class));
                     }
                     break;
                 case "connect":
                     booleanValue = intent.getBooleanExtra("value", false);
                     if (booleanValue) {
                         makeText(context,"服务器连接成功", LENGTH_LONG).show();
-                        context.startActivity(new Intent(Load.this,Login.class));
-                        //Load.this.finish();
+                        Load.this.finish();
                     } else {
                         makeText(context,"服务器连接失败", LENGTH_LONG).show();
                     }
+                    context.startActivity(new Intent(Load.this,Login.class));
                     break;
             }
         }

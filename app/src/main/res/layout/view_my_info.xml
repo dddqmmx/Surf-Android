@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:setting_buttom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -16,9 +17,11 @@
             android:layout_width="80dp"
             android:layout_height="80dp"/>
         <RelativeLayout
+            android:layout_centerVertical="true"
+            android:layout_marginStart="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/head">
+            android:layout_toEndOf="@id/head">
 
             <TextView
                 android:id="@+id/name"
@@ -26,7 +29,8 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:text="@string/default_name"
-                android:textColor="#FFFFFF" />
+                android:textColor="#FFFFFF"
+                android:gravity="center"/>
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
@@ -42,76 +46,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp">
+        android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/setting"
+        <com.dd.surf.view.SettingButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp">
+            setting_buttom:icon="@drawable/settings"
+            setting_buttom:text="@string/settings" />
 
-            <ImageView
-                android:id="@+id/setting_image"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/settings"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="20dp"
-                android:layout_toEndOf="@id/setting_image"
-                android:text="@string/settings" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/developers"
+        <com.dd.surf.view.SettingButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp">
+            setting_buttom:icon="@drawable/developers"
+            setting_buttom:text="@string/developers" />
 
-            <ImageView
-                android:id="@+id/developers_image"
-                android:layout_centerVertical="true"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/developers"/>
-
-            <TextView
-                android:layout_marginStart="20dp"
-                android:layout_toEndOf="@id/developers_image"
-                android:layout_centerVertical="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/developers"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/quit"
+        <com.dd.surf.view.SettingButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp">
-
-            <ImageView
-                android:id="@+id/quitImage"
-                android:layout_centerVertical="true"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/power"/>
-
-            <TextView
-                android:layout_marginStart="20dp"
-                android:layout_toEndOf="@id/quitImage"
-                android:layout_centerVertical="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/quit"/>
-
-        </RelativeLayout>
+            setting_buttom:icon="@drawable/power"
+            setting_buttom:text="@string/quit" />
 
     </LinearLayout>
 
