@@ -44,23 +44,27 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/optionsLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <com.dd.surf.view.SettingButton
+            android:id="@+id/settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             setting_buttom:icon="@drawable/settings"
             setting_buttom:text="@string/settings" />
 
         <com.dd.surf.view.SettingButton
+            android:id="@+id/developers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             setting_buttom:icon="@drawable/developers"
             setting_buttom:text="@string/developers" />
 
         <com.dd.surf.view.SettingButton
+            android:id="@+id/quit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             setting_buttom:icon="@drawable/power"

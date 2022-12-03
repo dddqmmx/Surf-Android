@@ -121,6 +121,7 @@ public class TCPService extends Service {
                     } else if("login".equals(command)) {
                         boolean login = jsonObject.getBoolean("login");
                         String message = jsonObject.getString("message");
+                        Server.userId = jsonObject.getInt("id");
                         Intent intent=new Intent();
                         intent.setAction("com.dd.surf.service.tcpClient");
                         intent.putExtra("command", "login");

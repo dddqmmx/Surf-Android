@@ -9,7 +9,8 @@
         android:padding="10dp"
         android:paddingStart="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="RtlSymmetry">
 
         <ImageView
             android:id="@+id/icon"

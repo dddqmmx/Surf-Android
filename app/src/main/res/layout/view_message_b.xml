@@ -9,14 +9,14 @@
         android:id="@+id/head"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:src="@drawable/default_head" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/head"
+        android:layout_toStartOf="@id/head"
         android:layout_marginEnd="15dp"
         android:text="@string/default_name" />
 

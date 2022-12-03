@@ -180,6 +180,9 @@ public class Chat extends AppCompatActivity {
 
     protected void addMessageText(int id,String text){
         View messageView = null;
+        System.out.println(id);
+        System.out.println(Server.userId);
+        System.out.println(id != Server.userId);
         if (id != Server.userId)
             messageView = layoutInflater.inflate(R.layout.view_message_a, null);
         else{

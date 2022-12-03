@@ -46,7 +46,7 @@ public class Server extends Application {
         userHashMap.put(userId, user);
     }
 
-    public static String host = "192.168.1.165";
+    public static String host = "192.168.6.165";
 
     public static String sessionId;
 
