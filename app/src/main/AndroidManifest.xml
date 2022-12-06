@@ -19,11 +19,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Surf">
+        <activity
+            android:name=".UserInfo"
+            android:exported="true"
+            android:theme="@style/NoActionBar">
+
+        </activity>
 
         <service
             android:name=".service.TCPService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
         <service android:name=".service.UpdateChatMessageService" />
 
         <activity
@@ -36,7 +42,7 @@
             android:theme="@style/Theme.chat" />
         <activity
             android:name=".Developers"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/developers" />
         <activity
             android:name=".Main"
@@ -47,17 +53,17 @@
             android:name=".Login"
             android:exported="false"
             android:theme="@style/Theme.login" />
-        <activity android:name=".TestActivity"
+        <activity
+            android:name=".TestActivity"
             android:exported="false"
             android:label="Main"
-            android:theme="@style/Theme.main"/>
+            android:theme="@style/Theme.main" />
         <activity
             android:name=".Load"
             android:exported="true"
             android:theme="@style/Theme.NoTitleFullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

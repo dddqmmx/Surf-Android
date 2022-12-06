@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Surf</string>
     <string name="copyright_information">dddqmmx© 2018–2022</string>
     <string name="username">UserName</string>
@@ -21,7 +21,12 @@
     <string name="developer_option_title">Developer Option Title</string>
     <string name="toMainButton">toMainActivityButton</string>
     <string name="quit">Quit</string>
-
+    <string name="online">online</string>
+    <string name="account">account</string>
+    <string name="personal_profile">personal profile</string>
+    <string name="self_introduction">I don\'t know how translate this</string>
+    <string name="send_massage">Send Massage</string>
+    <string name="add_friend">add friend</string>
     <string-array name="default_server_arrays">
         <item>official server</item>
     </string-array>

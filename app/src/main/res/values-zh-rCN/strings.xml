@@ -22,7 +22,12 @@
     <string name="developer_option_title">开发者选项</string>
     <string name="toMainButton">跳转MainActivity</string>
     <string name="quit">退出</string>
-
+    <string name="account">账号</string>
+    <string name="online">在线</string>
+    <string name="personal_profile">个人简介</string>
+    <string name="self_introduction">在这填写自我介绍或者一些批话</string>
+    <string name="send_massage">发消息</string>
+    <string name="add_friend">加好友</string>
     <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
         <item>官方服务器</item>
     </string-array>

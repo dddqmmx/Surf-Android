@@ -15,10 +15,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dd.surf.Chat;
+import com.dd.surf.Developers;
 import com.dd.surf.Main;
 import com.dd.surf.R;
 import com.dd.surf.TestActivity;
+import com.dd.surf.UserInfo;
 import com.dd.surf.entity.Message;
+import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
 import com.dd.surf.util.Control;
 
@@ -59,6 +62,11 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         userName = myInfo.findViewById(R.id.user_name);
         name = myInfo.findViewById(R.id.name);
 
+        View developers = myInfo.findViewById(R.id.developers);
+        developers.setOnClickListener(v -> {
+            activity.startActivity(new Intent(activity, Developers.class));
+        });
+
         View quit = myInfo.findViewById(R.id.quit);
         quit.setOnClickListener(v -> {
             activity.finish();
@@ -86,6 +94,9 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
 
     public void addFriend(int id,String name){
         View friendView = layoutInflater.inflate(R.layout.view_message,null);
+        friendView.setOnClickListener((view)->{
+            activity.startActivity(new Intent(activity, UserInfo.class));
+        });
         TextView nameText = friendView.findViewById(R.id.name);
         nameText.setText(name);
         friendListLayout.addView(friendView);
