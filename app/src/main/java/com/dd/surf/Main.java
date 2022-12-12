@@ -116,8 +116,6 @@ public class Main extends AppCompatActivity {
             tabLayoutMediator.attach();
 
             service.getUserInfo();
-            service.getGroupList();
-            service.getUserFriend();
         }
 
         @Override
@@ -148,6 +146,7 @@ public class Main extends AppCompatActivity {
                     User user = Server.getUser(Server.userId);
                     adapterMain.name.setText(user.getName());
                     adapterMain.userName.setText(user.getUserName());
+                    service.getGroupList();
                     break;
                 case "getGroupList":
                     try {
@@ -161,6 +160,7 @@ public class Main extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    service.getUserFriend();
                     break;
                 case "getUserFriendList":
                     try {

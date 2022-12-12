@@ -27,6 +27,8 @@
     <string name="self_introduction">I don\'t know how translate this</string>
     <string name="send_massage">Send Massage</string>
     <string name="add_friend">add friend</string>
+    <string name="user_info">user info</string>
+    <string name="show_image">show image</string>
     <string-array name="default_server_arrays">
         <item>official server</item>
     </string-array>

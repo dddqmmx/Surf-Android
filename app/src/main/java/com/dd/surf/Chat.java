@@ -203,6 +203,12 @@ public class Chat extends AppCompatActivity {
         TextView textView = new TextView(this);
         textView.setText(text);
         linearLayout.addView(textView);
+        ImageView headImage = messageView.findViewById(R.id.head);
+        headImage.setOnClickListener((v)->{
+            Intent intent = new Intent(this, UserInfo.class);
+            intent.putExtra("id",id);
+            this.startActivity(intent);
+        });
         messageList.addView(messageView);
     }
 

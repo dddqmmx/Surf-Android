@@ -21,9 +21,7 @@
         android:theme="@style/Theme.Surf">
         <activity
             android:name=".UserInfo"
-            android:exported="true"
-            android:theme="@style/NoActionBar">
-
+            android:exported="true">
         </activity>
 
         <service

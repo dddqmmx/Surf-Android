@@ -9,6 +9,7 @@ public class User implements Serializable {
     private String password;
     private String name;
 
+    private String personalProfile;
     public Integer getId() {
         return id;
     }
@@ -41,6 +42,14 @@ public class User implements Serializable {
         this.name = name;
     }
 
+    public String getPersonalProfile() {
+        return personalProfile;
+    }
+
+    public void setPersonalProfile(String personal_profile) {
+        this.personalProfile = personal_profile;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -48,6 +57,7 @@ public class User implements Serializable {
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
+                ", personalProfile='" + personalProfile + '\'' +
                 '}';
     }
 }

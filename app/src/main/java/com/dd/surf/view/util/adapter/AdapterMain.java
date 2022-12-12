@@ -95,7 +95,9 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
     public void addFriend(int id,String name){
         View friendView = layoutInflater.inflate(R.layout.view_message,null);
         friendView.setOnClickListener((view)->{
-            activity.startActivity(new Intent(activity, UserInfo.class));
+            Intent intent = new Intent(activity, UserInfo.class);
+            intent.putExtra("id",id);
+            activity.startActivity(intent);
         });
         TextView nameText = friendView.findViewById(R.id.name);
         nameText.setText(name);

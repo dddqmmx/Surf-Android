@@ -28,6 +28,8 @@
     <string name="self_introduction">在这填写自我介绍或者一些批话</string>
     <string name="send_massage">发消息</string>
     <string name="add_friend">加好友</string>
+    <string name="user_info">用户信息</string>
+    <string name="show_image">展示图片</string>
     <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
         <item>官方服务器</item>
     </string-array>

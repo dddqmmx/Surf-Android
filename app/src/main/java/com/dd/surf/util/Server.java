@@ -42,7 +42,7 @@ public class Server extends Application {
         return userHashMap.get(userId);
     }
 
-    public static void addUser(int userId, User user) {
+    public static void setUser(int userId, User user) {
         userHashMap.put(userId, user);
     }
 
