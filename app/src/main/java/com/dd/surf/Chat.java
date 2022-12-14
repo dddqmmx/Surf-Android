@@ -1,6 +1,5 @@
 package com.dd.surf;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
-import com.dd.surf.util.Server;
+import com.dd.surf.util.Client;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,7 +102,7 @@ public class Chat extends AppCompatActivity {
             try {
                 String messageText = messageEditText.getText().toString();
                 if (!messageText.equals("")) {
-                    int userId = Server.userId;
+                    int userId = Client.userId;
                     addMessageText(userId,messageText);
                     service.sendTextMessage(type,id,messageText);
                     messageEditText.setText("");
@@ -181,21 +179,21 @@ public class Chat extends AppCompatActivity {
     protected void addMessageText(int id,String text){
         View messageView = null;
         System.out.println(id);
-        System.out.println(Server.userId);
-        System.out.println(id != Server.userId);
-        if (id != Server.userId)
+        System.out.println(Client.userId);
+        System.out.println(id != Client.userId);
+        if (id != Client.userId)
             messageView = layoutInflater.inflate(R.layout.view_message_a, null);
         else{
             messageView = layoutInflater.inflate(R.layout.view_message_b,null);
         }
         messageView.setContentDescription(String.valueOf(id));
         TextView nameView = messageView.findViewById(R.id.name);
-        if (Server.hasUser(id)){
-            User user = Server.getUser(id);
+        if (Client.hasUser(id)){
+            User user = Client.getUser(id);
             nameView.setText(user.getName());
         }else{
             if (!getUserIdList.contains(id)){
-                Server.getUserInfo(id);
+                Client.getUserInfo(id);
                 getUserIdList.add(id);
             }
         }

@@ -4,7 +4,6 @@ import static android.widget.Toast.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Person;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,17 +11,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.StrictMode;
-import android.view.Menu;
-import android.widget.Toast;
 
 import com.dd.surf.service.TCPService;
 import com.dd.surf.service.TCPService.LocalBinder;
-
-import com.dd.surf.util.Server;
 
 public class Load extends AppCompatActivity {
 

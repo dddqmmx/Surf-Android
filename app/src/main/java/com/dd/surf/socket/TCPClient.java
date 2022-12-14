@@ -1,10 +1,5 @@
 package com.dd.surf.socket;
 
-import android.os.Handler;
-import android.os.Looper;
-
-import com.dd.surf.util.Server;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,13 +10,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class TCPClient extends Thread{
 

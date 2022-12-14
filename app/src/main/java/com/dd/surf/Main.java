@@ -1,6 +1,5 @@
 package com.dd.surf;
 
-import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
 
 import android.content.BroadcastReceiver;
@@ -22,7 +21,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
-import com.dd.surf.util.Server;
+import com.dd.surf.util.Client;
 import com.dd.surf.view.util.adapter.AdapterMain;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -54,7 +53,7 @@ public class Main extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        Server server = (Server) getApplication();
+        Client client = (Client) getApplication();
 
         conn=new MyServiceConn();
         bindService(new Intent(Main.this, TCPService.class), conn, BIND_AUTO_CREATE);
@@ -109,7 +108,7 @@ public class Main extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
-            Server.setTcpService(service);
+            Client.setTcpService(service);
 
             adapterMain = new AdapterMain(Main.this,service);
             viewPager.setAdapter(adapterMain);
@@ -143,7 +142,7 @@ public class Main extends AppCompatActivity {
             String name = null;
             switch (command) {
                 case "getUserInfo":
-                    User user = Server.getUser(Server.userId);
+                    User user = Client.getUser(Client.userId);
                     adapterMain.name.setText(user.getName());
                     adapterMain.userName.setText(user.getUserName());
                     service.getGroupList();

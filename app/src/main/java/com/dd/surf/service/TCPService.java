@@ -3,32 +3,23 @@ package com.dd.surf.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 
 import com.dd.surf.pojo.User;
-import com.dd.surf.socket.TCPClient;
-import com.dd.surf.util.Server;
+import com.dd.surf.util.Client;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -91,7 +82,7 @@ public class TCPService extends Service {
     }
 
     public void initialization() {
-        boolean tcpInitialization = tcpInitialization(Server.host);
+        boolean tcpInitialization = tcpInitialization(Client.host);
         Intent intent=new Intent();
         intent.setAction("com.dd.surf.service.tcpClient");
         intent.putExtra("command", "initialization");
@@ -112,7 +103,7 @@ public class TCPService extends Service {
                     String command = jsonObject.getString("command");
                     if ("connect".equals(command)) {
                         String sessionId = jsonObject.getString("sessionId");
-                        Server.setSessionId(sessionId);
+                        Client.setSessionId(sessionId);
                         Intent intent=new Intent();
                         intent.setAction("com.dd.surf.service.tcpClient");
                         intent.putExtra("command", "connect");
@@ -121,7 +112,7 @@ public class TCPService extends Service {
                     } else if("login".equals(command)) {
                         boolean login = jsonObject.getBoolean("login");
                         String message = jsonObject.getString("message");
-                        Server.userId = jsonObject.getInt("id");
+                        Client.userId = jsonObject.getInt("id");
                         Intent intent=new Intent();
                         intent.setAction("com.dd.surf.service.tcpClient");
                         intent.putExtra("command", "login");
@@ -132,10 +123,10 @@ public class TCPService extends Service {
                         String userName = jsonObject.getString("userName");
                         String name = jsonObject.getString("name");
                         User user = new User();
-                        user.setId(Server.userId);
+                        user.setId(Client.userId);
                         user.setUserName(userName);
                         user.setName(name);
-                        Server.setUser(Server.userId,user);
+                        Client.setUser(Client.userId,user);
                         Intent intent=new Intent();
                         intent.setAction("com.dd.surf.service.tcpClient");
                         intent.putExtra("command", "getUserInfo");
@@ -181,10 +172,10 @@ public class TCPService extends Service {
                         user.setUserName(userName);
                         user.setName(name);
                         user.setPersonalProfile(personalProfile);
-                        if (Server.hasUser(id)){
-                            User clientUser = Server.getUser(id);
+                        if (Client.hasUser(id)){
+                            User clientUser = Client.getUser(id);
                             if (!clientUser.equals(user)){
-                                Server.setUser(id,user);
+                                Client.setUser(id,user);
                                 Intent intent=new Intent();
                                 intent.setAction("com.dd.surf.service.tcpClient");
                                 intent.putExtra("command", "getUserInfoById");
@@ -195,7 +186,7 @@ public class TCPService extends Service {
                                 sendContent(intent);
                             }
                         }else {
-                            Server.setUser(id,user);
+                            Client.setUser(id,user);
                             Intent intent=new Intent();
                             intent.setAction("com.dd.surf.service.tcpClient");
                             intent.putExtra("command", "getUserInfoById");

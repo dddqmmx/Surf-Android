@@ -9,13 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,11 +20,7 @@ import android.widget.TextView;
 
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
-import com.dd.surf.util.Server;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.dd.surf.util.Client;
 
 public class UserInfo extends AppCompatActivity {
 
@@ -83,8 +76,8 @@ public class UserInfo extends AppCompatActivity {
         userNameTextView = findViewById(R.id.user_name);
         personalProfileTextView = findViewById(R.id.personal_profile);
 
-        if (Server.hasUser(id)){
-            User user = Server.getUser(id);
+        if (Client.hasUser(id)){
+            User user = Client.getUser(id);
             nameTextView.setText(user.getName());
             userNameTextView.setText(user.getUserName());
             personalProfileTextView.setText(user.getPersonalProfile());

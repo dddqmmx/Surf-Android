@@ -17,9 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.dd.surf.service.TCPService;
-import com.dd.surf.util.Control;
-import com.dd.surf.util.Server;
-import com.dd.surf.view.util.Out;
+import com.dd.surf.util.Client;
 
 public class Login extends AppCompatActivity {
 
@@ -33,7 +31,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Server server = (Server) getApplication();
+        Client client = (Client) getApplication();
 
         conn=new MyServiceConn();
         bindService(new Intent(Login.this, TCPService.class), conn, BIND_AUTO_CREATE);

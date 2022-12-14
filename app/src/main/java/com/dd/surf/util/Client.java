@@ -1,20 +1,13 @@
 package com.dd.surf.util;
 
 import android.app.Application;
-import android.net.wifi.WifiManager;
 
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
-import com.dd.surf.socket.TCPClient;
-import com.dd.surf.socket.UDPClient;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 
-public class Server extends Application {
+public class Client extends Application {
 
     private static TCPService tcpService;
 
@@ -23,7 +16,7 @@ public class Server extends Application {
     }
 
     public static void setTcpService(TCPService tcpService) {
-        Server.tcpService = tcpService;
+        Client.tcpService = tcpService;
     }
 
     public static int userId;
@@ -55,7 +48,7 @@ public class Server extends Application {
     }
 
     public static void setSessionId(String sessionId) {
-         Server.sessionId = sessionId;
+         Client.sessionId = sessionId;
     }
 
 }

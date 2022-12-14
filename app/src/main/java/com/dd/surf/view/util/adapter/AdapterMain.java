@@ -1,8 +1,6 @@
 package com.dd.surf.view.util.adapter;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dd.surf.Chat;
 import com.dd.surf.Developers;
-import com.dd.surf.Main;
 import com.dd.surf.R;
-import com.dd.surf.TestActivity;
 import com.dd.surf.UserInfo;
-import com.dd.surf.entity.Message;
-import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
-import com.dd.surf.util.Control;
-
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.dd.surf.util.Client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +52,12 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         View myInfo = layoutInflater.inflate(R.layout.view_my_info,null);
         userName = myInfo.findViewById(R.id.user_name);
         name = myInfo.findViewById(R.id.name);
+        View userInfo = myInfo.findViewById(R.id.userInfo);
+        userInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, UserInfo.class);
+            intent.putExtra("id", Client.userId);
+            activity.startActivity(intent);
+        });
 
         View developers = myInfo.findViewById(R.id.developers);
         developers.setOnClickListener(v -> {

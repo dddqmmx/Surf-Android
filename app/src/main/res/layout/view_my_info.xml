@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/userInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#588FBA"
@@ -29,8 +30,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:text="@string/default_name"
-                android:textColor="#FFFFFF"
-                android:gravity="center"/>
+                android:textColor="#FFFFFF" />
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
                 android:paddingTop="5dp"
                 android:text="@string/default_user_name"
                 android:textColor="#C2E5FF"
-                android:layout_below="@id/name"/>
+                android:layout_below="@id/name" />
         </RelativeLayout>
 
     </RelativeLayout>
