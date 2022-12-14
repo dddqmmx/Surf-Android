@@ -210,6 +210,13 @@ public class TCPService extends Service {
                             intent.putExtra("message",message);
                             sendContent(intent);
                         }
+                    } else if ("addFriendRequest".equals(command)){
+                        int code = jsonObject.getInt("code");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "addFriendRequest");
+                        intent.putExtra("code",code);
+                        sendContent(intent);
                     }
                 }
             }catch (Exception e){
@@ -311,6 +318,17 @@ public class TCPService extends Service {
             jsonObject.put("contactType",contactType);
             jsonObject.put("contactId",contactId);
             jsonObject.put("message",message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void addFriendRequest(int userId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","addFriendRequest");
+            jsonObject.put("userId",userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }

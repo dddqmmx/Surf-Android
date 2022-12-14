@@ -13,9 +13,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.dd.surf.pojo.User;
@@ -82,6 +84,21 @@ public class UserInfo extends AppCompatActivity {
             userNameTextView.setText(user.getUserName());
             personalProfileTextView.setText(user.getPersonalProfile());
         }
+        LinearLayout optionsLayout = findViewById(R.id.optionsLayout);
+        if(id == Client.userId){
+            optionsLayout.removeAllViews();
+        }
+        Button button1 = findViewById(R.id.button1);
+        Button button2 = findViewById(R.id.button2);
+        System.out.println(Client.friendsList.contains(id));
+        if (Client.friendsList.contains(id)){
+            button1.setVisibility(View.GONE);
+        }else{
+            button1.setOnClickListener(v -> {
+                service.addFriendRequest(id);
+
+            });
+        }
     }
     public class MyServiceConn implements ServiceConnection {
 
@@ -115,7 +132,6 @@ public class UserInfo extends AppCompatActivity {
             String command = intent.getStringExtra("command");
             switch (command) {
                 case "getUserInfoById":
-                    System.out.println("ssssssssssssssssssssss");
                     int id = intent.getIntExtra("id",0);
                     String name = intent.getStringExtra("name");
                     String userName = intent.getStringExtra("userName");
@@ -124,6 +140,19 @@ public class UserInfo extends AppCompatActivity {
                     userNameTextView.setText(userName);
                     personalProfileTextView.setText(personalProfile);
                     break;
+                case "addFriendRequest":
+                    int code = intent.getIntExtra("code",2);
+                    switch (code) {
+                        case 0:
+                            Toast.makeText(UserInfo.this,"已发送好友请求",Toast.LENGTH_LONG).show();
+                            break;
+                        case 1:
+                            Toast.makeText(UserInfo.this,"已经发送过好友申请了,请等待对方同意",Toast.LENGTH_LONG).show();
+                            break;
+                        case 2:
+                            Toast.makeText(UserInfo.this,"服务器内部处理出现错误",Toast.LENGTH_LONG).show();
+                            break;
+                    }
             }
         }
     }

@@ -5,7 +5,9 @@ import android.app.Application;
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Client extends Application {
 
@@ -38,6 +40,8 @@ public class Client extends Application {
     public static void setUser(int userId, User user) {
         userHashMap.put(userId, user);
     }
+
+    public static List<Integer> friendsList = new ArrayList<>();
 
     public static String host = "192.168.6.165";
 

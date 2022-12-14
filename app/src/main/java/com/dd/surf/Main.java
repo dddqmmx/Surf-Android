@@ -167,6 +167,7 @@ public class Main extends AppCompatActivity {
                         for (int i = 0; i < groupList.length(); i++) {
                             JSONObject jsonObject = groupList.getJSONObject(i);
                             int id = jsonObject.getInt("id");
+                            Client.friendsList.add(id);
                             userName = jsonObject.getString("userName");
                             name = jsonObject.getString("name");
                             adapterMain.addFriend(id,name);
