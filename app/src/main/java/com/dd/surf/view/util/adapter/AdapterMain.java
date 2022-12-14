@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dd.surf.AddFriendRequestList;
 import com.dd.surf.Chat;
 import com.dd.surf.Developers;
 import com.dd.surf.R;
@@ -47,6 +48,10 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
 
         messageListLayout = messagesList.findViewById(R.id.message_list);
         View friendsList = layoutInflater.inflate(R.layout.view_friend_list,null);
+        View toAddFriendRequestList = friendsList.findViewById(R.id.toAddFriendRequestList);
+        toAddFriendRequestList.setOnClickListener(v -> {
+            activity.startActivity(new Intent(activity, AddFriendRequestList.class));
+        });
         friendListLayout = friendsList.findViewById(R.id.friend_list);
 
         View myInfo = layoutInflater.inflate(R.layout.view_my_info,null);

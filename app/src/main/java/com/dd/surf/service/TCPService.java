@@ -217,6 +217,13 @@ public class TCPService extends Service {
                         intent.putExtra("command", "addFriendRequest");
                         intent.putExtra("code",code);
                         sendContent(intent);
+                    } else if ("getFriendRequest".equals(command)){
+                        JSONArray relationArray = jsonObject.getJSONArray("relationArray");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getFriendRequest");
+                        intent.putExtra("relationArray",relationArray.toString());
+                        sendContent(intent);
                     }
                 }
             }catch (Exception e){
@@ -328,6 +335,27 @@ public class TCPService extends Service {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("command","addFriendRequest");
+            jsonObject.put("userId",userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void getFriendRequest(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getFriendRequest");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void agreeRequest(int userId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","agreeRequest");
             jsonObject.put("userId",userId);
         } catch (JSONException e) {
             e.printStackTrace();

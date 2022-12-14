@@ -30,6 +30,8 @@
     <string name="add_friend">加好友</string>
     <string name="user_info">用户信息</string>
     <string name="show_image">展示图片</string>
+    <string name="friend_request_list">好友请求列表</string>
+    <string name="agree">同意</string>
     <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
         <item>官方服务器</item>
     </string-array>
