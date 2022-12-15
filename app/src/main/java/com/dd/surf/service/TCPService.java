@@ -224,6 +224,15 @@ public class TCPService extends Service {
                         intent.putExtra("command", "getFriendRequest");
                         intent.putExtra("relationArray",relationArray.toString());
                         sendContent(intent);
+                    } else if ("agreeRequest".equals(command)){
+                        int id = jsonObject.getInt("id");
+                        int code = jsonObject.getInt("code");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "agreeRequest");
+                        intent.putExtra("id",id);
+                        intent.putExtra("code",code);
+                        sendContent(intent);
                     }
                 }
             }catch (Exception e){

@@ -84,20 +84,21 @@ public class UserInfo extends AppCompatActivity {
             userNameTextView.setText(user.getUserName());
             personalProfileTextView.setText(user.getPersonalProfile());
         }
+
         LinearLayout optionsLayout = findViewById(R.id.optionsLayout);
         if(id == Client.userId){
             optionsLayout.removeAllViews();
-        }
-        Button button1 = findViewById(R.id.button1);
-        Button button2 = findViewById(R.id.button2);
-        System.out.println(Client.friendsList.contains(id));
-        if (Client.friendsList.contains(id)){
-            button1.setVisibility(View.GONE);
         }else{
-            button1.setOnClickListener(v -> {
-                service.addFriendRequest(id);
-
-            });
+            Button button1 = findViewById(R.id.button1);
+            Button button2 = findViewById(R.id.button2);
+            System.out.println(Client.friendsList.contains(id));
+            if (Client.friendsList.contains(id)){
+                button1.setVisibility(View.GONE);
+            }else{
+                button1.setOnClickListener(v -> {
+                    service.addFriendRequest(id);
+                });
+            }
         }
     }
     public class MyServiceConn implements ServiceConnection {
@@ -129,13 +130,17 @@ public class UserInfo extends AppCompatActivity {
     public class ContentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            int id;
+            String name;
+            String userName;
+            String personalProfile;
             String command = intent.getStringExtra("command");
             switch (command) {
                 case "getUserInfoById":
-                    int id = intent.getIntExtra("id",0);
-                    String name = intent.getStringExtra("name");
-                    String userName = intent.getStringExtra("userName");
-                    String personalProfile = intent.getStringExtra("personalProfile");
+                    id = intent.getIntExtra("id",0);
+                    name = intent.getStringExtra("name");
+                    userName = intent.getStringExtra("userName");
+                    personalProfile = intent.getStringExtra("personalProfile");
                     nameTextView.setText(name);
                     userNameTextView.setText(userName);
                     personalProfileTextView.setText(personalProfile);
@@ -153,6 +158,7 @@ public class UserInfo extends AppCompatActivity {
                             Toast.makeText(UserInfo.this,"服务器内部处理出现错误",Toast.LENGTH_LONG).show();
                             break;
                     }
+                    break;
             }
         }
     }
