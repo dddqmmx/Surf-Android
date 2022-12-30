@@ -146,8 +146,7 @@ public class AddFriendRequestList extends AppCompatActivity {
                     try {
                         JSONArray relationArray = new JSONArray(intent.getStringExtra("relationArray"));
                         for (int i = 0; i < relationArray.length(); i++) {
-                            JSONObject jsonObject = relationArray.getJSONObject(i);
-                            int otherSideId = jsonObject.getInt("otherSideId");
+                            int otherSideId = relationArray.getInt(i);
                             addFriendRequest(otherSideId);
                         }
                     } catch (JSONException e) {
@@ -189,6 +188,8 @@ public class AddFriendRequestList extends AppCompatActivity {
                         }
                     }
                     break;
+                case "":
+
             }
         }
     }

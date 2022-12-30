@@ -20,6 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Surf">
         <activity
+            android:name=".MainActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".AddFriendRequestList"
             android:exported="false">
             <meta-data
@@ -28,7 +35,7 @@
         </activity>
         <activity
             android:name=".UserInfo"
-            android:exported="true"></activity>
+            android:exported="true" />
 
         <service
             android:name=".service.TCPService"
@@ -52,7 +59,7 @@
             android:name=".Main"
             android:exported="false"
             android:label="Main"
-            android:theme="@style/Theme.main" />
+            android:theme="@style/OverflowMenuStyle" />
         <activity
             android:name=".Login"
             android:exported="false"

@@ -2,6 +2,7 @@ package com.dd.surf;
 
 import static android.widget.Toast.makeText;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,9 +12,12 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +33,8 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Method;
 
 public class Main extends AppCompatActivity {
 
@@ -165,19 +171,76 @@ public class Main extends AppCompatActivity {
                     try {
                         JSONArray groupList = new JSONArray(intent.getStringExtra("userList"));
                         for (int i = 0; i < groupList.length(); i++) {
-                            JSONObject jsonObject = groupList.getJSONObject(i);
-                            int id = jsonObject.getInt("id");
+                            int id = groupList.getInt(i);
                             Client.friendsList.add(id);
-                            userName = jsonObject.getString("userName");
-                            name = jsonObject.getString("name");
-                            adapterMain.addFriend(id,name);
+                            adapterMain.addFriend(id);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     break;
+                case "getUserInfoById":
+                    int id = intent.getIntExtra("id", 0);
+                    user = Client.getUser(id);
+                    for (int i = 0 ; i < adapterMain.friendListLayout.getChildCount();i++){
+                        View child = adapterMain.friendListLayout.getChildAt(i);
+                        if (child.getId() == R.id.message_root){
+                            if (child.getContentDescription() == String.valueOf(id)){
+                                TextView nameText = child.findViewById(R.id.name);
+                                nameText.setText(user.getName());
+                                TextView messageText = child.findViewById(R.id.message);
+                                messageText.setText(user.getPersonalProfile());
+                            }
+                        }
+                    }
+                    break;
+                case "agreeRequest":
+                    int code = intent.getIntExtra("code",1);
+                    if (code == 0){
+                        id = intent.getIntExtra("id",0);
+                        adapterMain.addFriend(id);
+                    }
+                    break;
+                case "":
 
             }
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menu_create_group:
+                Toast.makeText(getApplicationContext(),"1",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_add_group_or_friend:
+                Toast.makeText(getApplicationContext(),"2",Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        if (menu != null) {
+            if (menu.getClass().getSimpleName().equalsIgnoreCase("MenuBuilder")) {
+                try {
+                    Method method = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                    method.setAccessible(true);
+                    method.invoke(menu, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return super.onMenuOpened(featureId, menu);
+    }
+
+
 }

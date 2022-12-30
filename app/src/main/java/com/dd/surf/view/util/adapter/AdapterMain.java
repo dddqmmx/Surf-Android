@@ -17,6 +17,7 @@ import com.dd.surf.Chat;
 import com.dd.surf.Developers;
 import com.dd.surf.R;
 import com.dd.surf.UserInfo;
+import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
 import com.dd.surf.util.Client;
 
@@ -36,6 +37,8 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
     public LinearLayout messageListLayout;
     public LinearLayout friendListLayout;
 
+    private List<Integer> getUserIdList = new ArrayList<>();
+
     public AdapterMain(Activity activity, TCPService service){
         this.activity = activity;
 
@@ -45,8 +48,8 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         layoutInflater= LayoutInflater.from(activity);
 
         View messagesList = layoutInflater.inflate(R.layout.view_message_list,null);
-
         messageListLayout = messagesList.findViewById(R.id.message_list);
+
         View friendsList = layoutInflater.inflate(R.layout.view_friend_list,null);
         View toAddFriendRequestList = friendsList.findViewById(R.id.toAddFriendRequestList);
         toAddFriendRequestList.setOnClickListener(v -> {
@@ -94,15 +97,24 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         });
     }
 
-    public void addFriend(int id,String name){
+    public void addFriend(int id){
         View friendView = layoutInflater.inflate(R.layout.view_message,null);
+        friendView.setContentDescription(String.valueOf(id));
         friendView.setOnClickListener((view)->{
             Intent intent = new Intent(activity, UserInfo.class);
             intent.putExtra("id",id);
             activity.startActivity(intent);
         });
         TextView nameText = friendView.findViewById(R.id.name);
-        nameText.setText(name);
+        if (Client.hasUser(id)){
+            User user = Client.getUser(id);
+            nameText.setText(user.getName());
+        }else{
+            if (!getUserIdList.contains(id)){
+                Client.getUserInfo(id);
+                getUserIdList.add(id);
+            }
+        }
         friendListLayout.addView(friendView);
     }
 

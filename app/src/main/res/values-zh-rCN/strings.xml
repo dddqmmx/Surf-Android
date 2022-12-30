@@ -32,6 +32,8 @@
     <string name="show_image">展示图片</string>
     <string name="friend_request_list">好友请求列表</string>
     <string name="agree">同意</string>
+    <string name="add_friend_or_add_group">好友/加群</string>
+    <string name="create_group">创建群聊</string>
     <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
         <item>官方服务器</item>
     </string-array>

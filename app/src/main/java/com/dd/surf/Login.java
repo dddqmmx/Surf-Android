@@ -26,6 +26,9 @@ public class Login extends AppCompatActivity {
 
     private ContentReceiver mReceiver;
 
+    EditText userName;
+    EditText password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,12 +45,12 @@ public class Login extends AppCompatActivity {
         filter.addAction("com.dd.surf.service.tcpClient");
         registerReceiver(mReceiver, filter);
 
-        EditText userName = findViewById(R.id.user_name);
-        EditText password = findViewById(R.id.password);
+        userName = findViewById(R.id.user_name);
+        password = findViewById(R.id.password);
 
         ImageButton imageButton = findViewById(R.id.login_button);
         imageButton.setOnClickListener((view)->{
-            service.login(userName.getText().toString(), password.getText().toString());
+            service.initialization();
         });
 
         //这是启动开发者选项的事件
@@ -86,7 +89,24 @@ public class Login extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String command = intent.getStringExtra("command");
+            boolean booleanValue = false;
             switch (command) {
+                case "initialization":
+                    booleanValue = intent.getBooleanExtra("value", false);
+                    if (booleanValue){
+                        service.connect();
+                    } else {
+                        makeText(context,"初始失败", LENGTH_LONG).show();
+                    }
+                    break;
+                case "connect":
+                    booleanValue = intent.getBooleanExtra("value", false);
+                    if (booleanValue) {
+                        service.login(userName.getText().toString(), password.getText().toString());
+                    } else {
+                        makeText(context,"服务器连接失败", LENGTH_LONG).show();
+                    }
+                    break;
                 case "login":
                     boolean login = intent.getBooleanExtra("login",false);
                     String message = intent.getStringExtra("message");

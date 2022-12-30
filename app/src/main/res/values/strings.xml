@@ -31,6 +31,8 @@
     <string name="show_image">show image</string>
     <string name="friend_request_list">Friend Request List</string>
     <string name="agree">agree</string>
+    <string name="add_friend_or_add_group">add friend or add group</string>
+    <string name="create_group">create group</string>
     <string-array name="default_server_arrays">
         <item>official client</item>
     </string-array>
