@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Surf">
         <activity
-            android:name=".MainActivity"
+            android:name=".AddFriendAndGroup"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

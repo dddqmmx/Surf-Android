@@ -2,6 +2,7 @@ package com.dd.surf.util;
 
 import android.app.Application;
 
+import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
 
@@ -40,6 +41,26 @@ public class Client extends Application {
     public static void setUser(int userId, User user) {
         userHashMap.put(userId, user);
     }
+
+
+    public static HashMap<Integer, Group> groupHashMap = new HashMap<>();
+
+    public static boolean hasGroup(int groupId) {
+        return groupHashMap.containsKey(groupId);
+    }
+
+    public static void getGroupInfo(int groupId) {
+        tcpService.getGroupInfoById(groupId);
+    }
+
+    public static Group getGroup(int groupId) {
+        return groupHashMap.get(groupId);
+    }
+
+    public static void setGroup(int groupId, Group group) {
+        groupHashMap.put(groupId, group);
+    }
+
 
     public static List<Integer> friendsList = new ArrayList<>();
 

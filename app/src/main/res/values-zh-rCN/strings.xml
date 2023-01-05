@@ -34,6 +34,9 @@
     <string name="agree">同意</string>
     <string name="add_friend_or_add_group">好友/加群</string>
     <string name="create_group">创建群聊</string>
+    <string name="select_group">搜索群聊</string>
+    <string name="select_user">搜索用户</string>
+    <string name="id_or_user_name">id或者用户名</string>
     <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
         <item>官方服务器</item>
     </string-array>

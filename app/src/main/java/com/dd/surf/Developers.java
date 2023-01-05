@@ -42,9 +42,8 @@ public class Developers extends AppCompatActivity {
 
         setContentView(R.layout.activity_developers);
 
-
-        mediaPlayer = MediaPlayer.create(this,R.raw.kurenai);
-        mediaPlayer.start();
+        /*mediaPlayer = MediaPlayer.create(this,R.raw.kurenai);*/
+        /*mediaPlayer.start();*/
 
     }
 

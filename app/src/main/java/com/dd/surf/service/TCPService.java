@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.util.Client;
 
@@ -176,26 +177,18 @@ public class TCPService extends Service {
                             User clientUser = Client.getUser(id);
                             if (!clientUser.equals(user)){
                                 Client.setUser(id,user);
-                                Intent intent=new Intent();
-                                intent.setAction("com.dd.surf.service.tcpClient");
-                                intent.putExtra("command", "getUserInfoById");
-                                intent.putExtra("id",user.getId());
-                                intent.putExtra("userName",user.getUserName());
-                                intent.putExtra("name",user.getName());
-                                intent.putExtra("personalProfile",user.getPersonalProfile());
-                                sendContent(intent);
                             }
                         }else {
                             Client.setUser(id,user);
-                            Intent intent=new Intent();
-                            intent.setAction("com.dd.surf.service.tcpClient");
-                            intent.putExtra("command", "getUserInfoById");
-                            intent.putExtra("id",user.getId());
-                            intent.putExtra("userName",user.getUserName());
-                            intent.putExtra("name",user.getName());
-                            intent.putExtra("personalProfile",user.getPersonalProfile());
-                            sendContent(intent);
                         }
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getUserInfoById");
+                        intent.putExtra("id",user.getId());
+                        intent.putExtra("userName",user.getUserName());
+                        intent.putExtra("name",user.getName());
+                        intent.putExtra("personalProfile",user.getPersonalProfile());
+                        sendContent(intent);
                     } else if ("processMessage".equals(command)){
                         int sender = jsonObject.getInt("sender");
                         String message = jsonObject.getString("message");
@@ -232,6 +225,46 @@ public class TCPService extends Service {
                         intent.putExtra("command", "agreeRequest");
                         intent.putExtra("id",id);
                         intent.putExtra("code",code);
+                        sendContent(intent);
+                    } else if ("selectGroup".equals(command)){
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "selectGroup");
+                        JSONArray relationArray = jsonObject.getJSONArray("groupList");
+                        intent.putExtra("groupList",relationArray.toString());
+                        sendContent(intent);
+                    } else if ("selectUser".equals(command)){
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "selectUser");
+                        JSONArray relationArray = jsonObject.getJSONArray("userList");
+                        intent.putExtra("userList",relationArray.toString());
+                        sendContent(intent);
+                    }else if ("getGroupInfoById".equals(command)) {
+                        int id = jsonObject.getInt("id");
+                        String groupName = jsonObject.getString("groupName");
+                        String groupHead = null;
+                        if (jsonObject.has("groupHead")){
+                            groupHead = jsonObject.getString("groupHead");
+                        }
+                        Group group = new Group();
+                        group.setId(id);
+                        group.setGroupName(groupName);
+                        group.setGroupHead(groupHead);
+                        if (Client.hasGroup(id)) {
+                            Group clientGroup = Client.getGroup(id);
+                            if (!clientGroup.equals(group)) {
+                                Client.setGroup(id, group);
+                            }
+                        } else {
+                            Client.setGroup(id, group);
+                        }
+                        Intent intent = new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getGroupInfoById");
+                        intent.putExtra("id", group.getId());
+                        intent.putExtra("groupName", group.getGroupName());
+                        intent.putExtra("groupHead", group.getGroupHead());
                         sendContent(intent);
                     }
                 }
@@ -279,6 +312,17 @@ public class TCPService extends Service {
         try {
             jsonObject.put("command","getUserInfoById");
             jsonObject.put("userId", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void getGroupInfoById(int groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getGroupInfoById");
+            jsonObject.put("groupId", groupId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -366,6 +410,28 @@ public class TCPService extends Service {
         try {
             jsonObject.put("command","agreeRequest");
             jsonObject.put("userId",userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void selectGroup(String condition){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","selectGroup");
+            jsonObject.put("condition",condition);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void selectUser(String condition){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","selectUser");
+            jsonObject.put("condition",condition);
         } catch (JSONException e) {
             e.printStackTrace();
         }

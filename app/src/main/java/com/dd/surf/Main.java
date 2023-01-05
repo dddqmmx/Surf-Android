@@ -217,10 +217,10 @@ public class Main extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_create_group:
-                Toast.makeText(getApplicationContext(),"1",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"2",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.menu_add_group_or_friend:
-                Toast.makeText(getApplicationContext(),"2",Toast.LENGTH_SHORT).show();
+                Main.this.startActivity(new Intent(this,AddFriendAndGroup.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

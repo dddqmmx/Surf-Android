@@ -33,6 +33,9 @@
     <string name="agree">agree</string>
     <string name="add_friend_or_add_group">add friend or add group</string>
     <string name="create_group">create group</string>
+    <string name="select_group">select group</string>
+    <string name="select_user">select user</string>
+    <string name="id_or_user_name">id or user name</string>
     <string-array name="default_server_arrays">
         <item>official client</item>
     </string-array>
