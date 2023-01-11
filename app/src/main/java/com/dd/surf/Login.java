@@ -112,7 +112,12 @@ public class Login extends AppCompatActivity {
                     String message = intent.getStringExtra("message");
                     if (login) {
                         makeText(context,message, LENGTH_LONG).show();
-                        context.startActivity(new Intent(Login.this,Main.class));
+                        Intent chatInteger = new Intent(context, AddRequestList.class);
+                        chatInteger.putExtra("id",2);
+                        context.startActivity(chatInteger);
+                        /*context.startActivity(new Intent(Login.this,,Main.class));
+                        */
+                        Client.setTcpService(service);
                         Login.this.finish();
                     }else {
                         makeText(context,"登录失败"+message, LENGTH_LONG).show();

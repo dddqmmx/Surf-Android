@@ -114,7 +114,6 @@ public class Main extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
-            Client.setTcpService(service);
 
             adapterMain = new AdapterMain(Main.this,service);
             viewPager.setAdapter(adapterMain);

@@ -5,6 +5,7 @@ import static android.widget.Toast.makeText;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,15 +22,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
 import com.dd.surf.util.Client;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AddRequestList extends AppCompatActivity {
 
@@ -42,7 +47,8 @@ public class AddRequestList extends AppCompatActivity {
 
     public LinearLayout  friendRequestList;
 
-    private List<Integer> getUserIdList = new ArrayList<>();
+    private final List<Integer> getUserIdList = new ArrayList<>();
+    private final List<Integer> getGroupIdList = new ArrayList<>();
 
     public int id;
     @Override
@@ -89,6 +95,42 @@ public class AddRequestList extends AppCompatActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
+    public void addGroupRequest(int userId, int groupId){
+        View friendView = layoutInflater.inflate(R.layout.view_friend_request,null);
+        friendView.setContentDescription("userId:"+userId+"groupId:"+groupId);
+        friendView.setOnClickListener((view)->{
+            Intent intent = new Intent(this, UserInfo.class);
+            intent.putExtra("id",userId);
+            this.startActivity(intent);
+        });
+        TextView nameText = friendView.findViewById(R.id.name);
+        if (Client.hasUser(userId)){
+            User user = Client.getUser(userId);
+            nameText.setText(user.getName());
+        }else{
+            if (!getUserIdList.contains(userId)){
+                Client.getUserInfo(userId);
+                getUserIdList.add(userId);
+            }
+        }
+        TextView messageText = friendView.findViewById(R.id.message);
+        if (Client.hasGroupInfo(groupId)){
+            Group group = Client.getGroupInfo(groupId);
+            messageText.setText(this.getString(R.string.applications_for_membership)+group.getGroupName());
+        }else{
+            if (!getGroupIdList.contains(groupId)){
+                Client.getGroupInfoByServer(groupId);
+                getGroupIdList.add(groupId);
+            }
+        }
+        Button agreeButton = friendView.findViewById(R.id.agree_button);
+        agreeButton.setOnClickListener((view)->{
+            service.agreeFriendRequest(groupId);
+        });
+        friendRequestList.addView(friendView);
+    }
+
     public void addFriendRequest(int id){
         View friendView = layoutInflater.inflate(R.layout.view_friend_request,null);
         friendView.setContentDescription(String.valueOf(id));
@@ -109,7 +151,7 @@ public class AddRequestList extends AppCompatActivity {
         }
         Button agreeButton = friendView.findViewById(R.id.agree_button);
         agreeButton.setOnClickListener((view)->{
-            service.agreeRequest(id);
+            service.agreeFriendRequest(id);
         });
         friendRequestList.addView(friendView);
     }
@@ -148,6 +190,8 @@ public class AddRequestList extends AppCompatActivity {
     public class ContentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String regId = "userId:([0-9]+)groupId:([0-9]+)";
+            Matcher matcher;
             int id;
             String name;
             String command = intent.getStringExtra("command");
@@ -171,14 +215,19 @@ public class AddRequestList extends AppCompatActivity {
                         View child = friendRequestList.getChildAt(i);
                         System.out.println(i);
                         if (child.getId() == R.id.friend_request){
-                            if (child.getContentDescription() == String.valueOf(id)){
+                            String contentDescription = (String) child.getContentDescription();
+                            matcher = Pattern.compile(regId).matcher(contentDescription);
+                            if (contentDescription.equals(String.valueOf(id))){
+                                TextView nameView = child.findViewById(R.id.name);
+                                nameView.setText(name);
+                            }else if (matcher.find() && String.valueOf(id).equals(matcher.group(1))){
                                 TextView nameView = child.findViewById(R.id.name);
                                 nameView.setText(name);
                             }
                         }
                     }
                     break;
-                case "agreeRequest":
+                case "agreeFriendRequest":
                     int code = intent.getIntExtra("code",1);
                     switch (code) {
                         case 0:
@@ -199,8 +248,37 @@ public class AddRequestList extends AppCompatActivity {
                         }
                     }
                     break;
-                case "":
-
+                case "getGroupRequest":
+                    try {
+                        JSONArray relationArray = new JSONArray(intent.getStringExtra("relationArray"));
+                        for (int i = 0; i < relationArray.length(); i++) {
+                            JSONObject jsonObject = relationArray.getJSONObject(i);
+                            int groupId = jsonObject.getInt("groupId");
+                            int userId = jsonObject.getInt("userId");
+                            addGroupRequest(userId, groupId);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "getGroupInfoById":
+                    id = intent.getIntExtra("id",0);
+                    name = intent.getStringExtra("groupName");
+                    for (int i = 0 ; i < friendRequestList.getChildCount();i++){
+                        View child = friendRequestList.getChildAt(i);
+                        if (child.getId() == R.id.friend_request){
+                            String contentDescription = (String) child.getContentDescription();
+                            matcher = Pattern.compile(regId).matcher(contentDescription);
+                            if (contentDescription.equals(String.valueOf(id))){
+                                TextView nameView = child.findViewById(R.id.message);
+                                nameView.setText(name);
+                            }else if (matcher.find() && String.valueOf(id).equals(matcher.group(2))){
+                                TextView nameView = child.findViewById(R.id.message);
+                                nameView.setText(name);
+                            }
+                        }
+                    }
+                    break;
             }
         }
     }

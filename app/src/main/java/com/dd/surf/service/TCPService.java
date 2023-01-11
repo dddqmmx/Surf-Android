@@ -217,12 +217,12 @@ public class TCPService extends Service {
                         intent.putExtra("command", "getFriendRequest");
                         intent.putExtra("relationArray",relationArray.toString());
                         sendContent(intent);
-                    } else if ("agreeRequest".equals(command)){
+                    } else if ("agreeFriendRequest".equals(command)){
                         int id = jsonObject.getInt("id");
                         int code = jsonObject.getInt("code");
                         Intent intent=new Intent();
                         intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "agreeRequest");
+                        intent.putExtra("command", "agreeFriendRequest");
                         intent.putExtra("id",id);
                         intent.putExtra("code",code);
                         sendContent(intent);
@@ -267,11 +267,20 @@ public class TCPService extends Service {
                         intent.putExtra("groupHead", group.getGroupHead());
                         sendContent(intent);
                     }else if("addGroupRequest".equals(command)){
+                        int id = jsonObject.getInt("id");
                         int code = jsonObject.getInt("code");
                         Intent intent=new Intent();
                         intent.setAction("com.dd.surf.service.tcpClient");
                         intent.putExtra("command", "addGroupRequest");
+                        intent.putExtra("id",id);
                         intent.putExtra("code",code);
+                        sendContent(intent);
+                    }else if("getGroupRequest".equals(command)){
+                        JSONArray relationArray = jsonObject.getJSONArray("relationArray");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getGroupRequest");
+                        intent.putExtra("relationArray",relationArray.toString());
                         sendContent(intent);
                     }
                 }
@@ -422,10 +431,10 @@ public class TCPService extends Service {
         send(jsonObject);
     }
 
-    public void agreeRequest(int userId){
+    public void agreeFriendRequest(int userId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("command","agreeRequest");
+            jsonObject.put("command","agreeFriendRequest");
             jsonObject.put("userId",userId);
         } catch (JSONException e) {
             e.printStackTrace();

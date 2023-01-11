@@ -43,6 +43,7 @@
     <string name="group_info">group info</string>
     <string name="group_request">group request</string>
     <string name="group_request_list">group request list</string>
+    <string name="applications_for_membership">applications or membership</string>
     <string-array name="default_server_arrays">
         <item>official client</item>
     </string-array>

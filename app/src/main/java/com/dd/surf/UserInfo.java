@@ -146,9 +146,11 @@ public class UserInfo extends AppCompatActivity {
                     personalProfileTextView.setText(personalProfile);
                     break;
                 case "addFriendRequest":
+                    id = intent.getIntExtra("id",0);
                     int code = intent.getIntExtra("code",2);
                     switch (code) {
                         case 0:
+                            Client.friendsList.add(id);
                             Toast.makeText(UserInfo.this,"已发送好友请求",Toast.LENGTH_LONG).show();
                             break;
                         case 1:

@@ -47,4 +47,5 @@
     <string-array name="default_server_arrays" tools:ignore="InconsistentArrays">
         <item>官方服务器</item>
     </string-array>
+    <string name="applications_for_membership">申请加入</string>
 </resources>
