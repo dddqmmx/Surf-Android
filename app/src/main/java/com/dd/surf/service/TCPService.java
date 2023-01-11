@@ -251,13 +251,13 @@ public class TCPService extends Service {
                         group.setId(id);
                         group.setGroupName(groupName);
                         group.setGroupHead(groupHead);
-                        if (Client.hasGroup(id)) {
-                            Group clientGroup = Client.getGroup(id);
+                        if (Client.hasGroupInfo(id)) {
+                            Group clientGroup = Client.getGroupInfo(id);
                             if (!clientGroup.equals(group)) {
-                                Client.setGroup(id, group);
+                                Client.setGroupInfo(id, group);
                             }
                         } else {
-                            Client.setGroup(id, group);
+                            Client.setGroupInfo(id, group);
                         }
                         Intent intent = new Intent();
                         intent.setAction("com.dd.surf.service.tcpClient");
@@ -265,6 +265,13 @@ public class TCPService extends Service {
                         intent.putExtra("id", group.getId());
                         intent.putExtra("groupName", group.getGroupName());
                         intent.putExtra("groupHead", group.getGroupHead());
+                        sendContent(intent);
+                    }else if("addGroupRequest".equals(command)){
+                        int code = jsonObject.getInt("code");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "addGroupRequest");
+                        intent.putExtra("code",code);
                         sendContent(intent);
                     }
                 }
@@ -405,6 +412,16 @@ public class TCPService extends Service {
         send(jsonObject);
     }
 
+    public void getGroupRequest(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getGroupRequest");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
     public void agreeRequest(int userId){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -432,6 +449,17 @@ public class TCPService extends Service {
         try {
             jsonObject.put("command","selectUser");
             jsonObject.put("condition",condition);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void addGroupRequest(int groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","addGroupRequest");
+            jsonObject.put("groupId",groupId);
         } catch (JSONException e) {
             e.printStackTrace();
         }

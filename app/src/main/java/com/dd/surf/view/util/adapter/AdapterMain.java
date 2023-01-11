@@ -12,9 +12,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dd.surf.AddFriendRequestList;
+import com.dd.surf.AddRequestList;
 import com.dd.surf.Chat;
 import com.dd.surf.Developers;
+import com.dd.surf.GroupInfo;
+import com.dd.surf.Main;
 import com.dd.surf.R;
 import com.dd.surf.UserInfo;
 import com.dd.surf.pojo.User;
@@ -53,7 +55,16 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         View friendsList = layoutInflater.inflate(R.layout.view_friend_list,null);
         View toAddFriendRequestList = friendsList.findViewById(R.id.toAddFriendRequestList);
         toAddFriendRequestList.setOnClickListener(v -> {
-            activity.startActivity(new Intent(activity, AddFriendRequestList.class));
+            Intent chatInteger = new Intent(activity, AddRequestList.class);
+            chatInteger.putExtra("id",1);
+            activity.startActivity(chatInteger);
+        });
+
+        View toAddGroupRequestList = friendsList.findViewById(R.id.toAddGroupRequestList);
+        toAddGroupRequestList.setOnClickListener(v -> {
+            Intent chatInteger = new Intent(activity, AddRequestList.class);
+            chatInteger.putExtra("id",2);
+            activity.startActivity(chatInteger);
         });
         friendListLayout = friendsList.findViewById(R.id.friend_list);
 

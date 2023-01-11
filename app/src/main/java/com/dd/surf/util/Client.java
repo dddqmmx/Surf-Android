@@ -42,27 +42,27 @@ public class Client extends Application {
         userHashMap.put(userId, user);
     }
 
+    public static HashMap<Integer, Group> groupInfoHashMap = new HashMap<>();
 
-    public static HashMap<Integer, Group> groupHashMap = new HashMap<>();
-
-    public static boolean hasGroup(int groupId) {
-        return groupHashMap.containsKey(groupId);
+    public static boolean hasGroupInfo(int groupId) {
+        return groupInfoHashMap.containsKey(groupId);
     }
 
-    public static void getGroupInfo(int groupId) {
+    public static void getGroupInfoByServer(int groupId) {
         tcpService.getGroupInfoById(groupId);
     }
 
-    public static Group getGroup(int groupId) {
-        return groupHashMap.get(groupId);
+    public static Group getGroupInfo(int groupId) {
+        return groupInfoHashMap.get(groupId);
     }
 
-    public static void setGroup(int groupId, Group group) {
-        groupHashMap.put(groupId, group);
+    public static void setGroupInfo(int groupId, Group group) {
+        groupInfoHashMap.put(groupId, group);
     }
-
 
     public static List<Integer> friendsList = new ArrayList<>();
+
+    public static List<Integer> groupList = new ArrayList<>();
 
     public static String host = "192.168.6.165";
 

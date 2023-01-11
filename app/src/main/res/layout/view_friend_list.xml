@@ -35,6 +35,37 @@
         android:layout_height="1dp"
         android:background="#EFEFEF"/>
 
+    <RelativeLayout
+        android:id="@+id/toAddGroupRequestList"
+        android:padding="10dp"
+        android:paddingStart="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="RtlSymmetry">
+
+        <ImageView
+            android:id="@+id/icon1"
+            android:layout_centerVertical="true"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_baseline_add_comment_24"/>
+
+        <TextView
+            android:layout_toEndOf="@id/icon1"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="@string/group_request"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EFEFEF"/>
+
+
     <LinearLayout
         android:paddingStart="10dp"
         android:paddingTop="20dp"

@@ -1,6 +1,5 @@
 package com.dd.surf;
 
-import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
 
 import androidx.appcompat.app.ActionBar;
@@ -28,12 +27,11 @@ import com.dd.surf.util.Client;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddFriendRequestList extends AppCompatActivity {
+public class AddRequestList extends AppCompatActivity {
 
     private MyServiceConn conn;
     private TCPService service;
@@ -46,14 +44,23 @@ public class AddFriendRequestList extends AppCompatActivity {
 
     private List<Integer> getUserIdList = new ArrayList<>();
 
+    public int id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        id = intent.getIntExtra("id",0);
+
         layoutInflater = getLayoutInflater();
 
         View titleBar = layoutInflater.inflate(R.layout.view_title_chat,new LinearLayout(this),false);
         TextView titleText = titleBar.findViewById(R.id.title);
-        titleText.setText(R.string.friend_request_list);
+        if (id == 1){
+            titleText.setText(R.string.friend_request_list);
+        }else {
+            titleText.setText(R.string.group_request_list);
+        }
 
         ImageView imageView = titleBar.findViewById(R.id.back);
         imageView.setOnClickListener((view)->{
@@ -113,7 +120,11 @@ public class AddFriendRequestList extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
-            service.getFriendRequest();
+            if (id == 1){
+                service.getFriendRequest();
+            }else if (id == 2){
+                service.getGroupRequest();
+            }
         }
 
         @Override
@@ -171,10 +182,10 @@ public class AddFriendRequestList extends AppCompatActivity {
                     int code = intent.getIntExtra("code",1);
                     switch (code) {
                         case 0:
-                            Toast.makeText(AddFriendRequestList.this,"已同意好友请求",Toast.LENGTH_LONG).show();
+                            Toast.makeText(AddRequestList.this,"已同意好友请求",Toast.LENGTH_LONG).show();
                             break;
                         case 1:
-                            Toast.makeText(AddFriendRequestList.this,"服务器内部处理出现错误",Toast.LENGTH_LONG).show();
+                            Toast.makeText(AddRequestList.this,"服务器内部处理出现错误",Toast.LENGTH_LONG).show();
                             break;
 
                     }

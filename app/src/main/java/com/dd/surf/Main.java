@@ -160,6 +160,7 @@ public class Main extends AppCompatActivity {
                             JSONObject jsonObject = groupList.getJSONObject(i);
                             int id = jsonObject.getInt("id");
                             String groupName = jsonObject.getString("groupName");
+                            Client.groupList.add(id);
                             adapterMain.addGroup(id,groupName);
                         }
                     } catch (JSONException e) {
@@ -217,7 +218,9 @@ public class Main extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_create_group:
-                Toast.makeText(getApplicationContext(),"2",Toast.LENGTH_SHORT).show();
+                Intent chatInteger = new Intent(Main.this, GroupInfo.class);
+                chatInteger.putExtra("id",1);
+                Main.this.startActivity(chatInteger);
                 break;
             case R.id.menu_add_group_or_friend:
                 Main.this.startActivity(new Intent(this,AddFriendAndGroup.class));

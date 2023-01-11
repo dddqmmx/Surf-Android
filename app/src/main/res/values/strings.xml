@@ -36,6 +36,13 @@
     <string name="select_group">select group</string>
     <string name="select_user">select user</string>
     <string name="id_or_user_name">id or user name</string>
+    <string name="add_group" />
+    <string name="info">Info</string>
+    <string name="default_id">default id</string>
+    <string name="group_id">group id</string>
+    <string name="group_info">group info</string>
+    <string name="group_request">group request</string>
+    <string name="group_request_list">group request list</string>
     <string-array name="default_server_arrays">
         <item>official client</item>
     </string-array>

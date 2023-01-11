@@ -20,6 +20,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Surf">
         <activity
+            android:name=".GroupInfo"
+            android:exported="false"
+            android:label="@string/group_info">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".AddFriendAndGroup"
             android:exported="false">
             <meta-data
@@ -27,7 +35,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".AddFriendRequestList"
+            android:name=".AddRequestList"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

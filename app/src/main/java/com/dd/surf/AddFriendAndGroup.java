@@ -1,6 +1,5 @@
 package com.dd.surf;
 
-import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
 
 import androidx.appcompat.app.ActionBar;
@@ -43,8 +42,8 @@ public class AddFriendAndGroup extends AppCompatActivity {
     private ContentReceiver mReceiver;
 
     LinearLayout list;
-    private List<Integer> getUserIdList = new ArrayList<>();
-    private List<Integer> getGroupIdList = new ArrayList<>();
+    private final List<Integer> getUserIdList = new ArrayList<>();
+    private final List<Integer> getGroupIdList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,19 +100,17 @@ public class AddFriendAndGroup extends AppCompatActivity {
         View messageView = layoutInflater.inflate(R.layout.view_message,null);
         messageView.setContentDescription(String.valueOf(id));
         messageView.setOnClickListener((view)->{
-            Intent chatInteger = new Intent(AddFriendAndGroup.this, Chat.class);
-            chatInteger.putExtra("type",1);
+            Intent chatInteger = new Intent(AddFriendAndGroup.this, GroupInfo.class);
             chatInteger.putExtra("id",id);
             AddFriendAndGroup.this.startActivity(chatInteger);
         });
         TextView nameText = messageView.findViewById(R.id.name);
-        System.out.println(Client.hasGroup(id));
-        if (Client.hasGroup(id)){
-            Group group = Client.getGroup(id);
+        if (Client.hasGroupInfo(id)){
+            Group group = Client.getGroupInfo(id);
             nameText.setText(group.getGroupName());
         }else{
             if (!getGroupIdList.contains(id)){
-                Client.getGroupInfo(id);
+                Client.getGroupInfoByServer(id);
                 getGroupIdList.add(id);
             }
         }
