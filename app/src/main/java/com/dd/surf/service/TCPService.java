@@ -1,8 +1,10 @@
 package com.dd.surf.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 
 import com.dd.surf.pojo.Group;
@@ -14,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -282,6 +286,34 @@ public class TCPService extends Service {
                         intent.putExtra("command", "getGroupRequest");
                         intent.putExtra("relationArray",relationArray.toString());
                         sendContent(intent);
+                    } else if ("agreeGroupRequest".equals(command)){
+                        int groupMemberId = jsonObject.getInt("groupMemberId");
+                        boolean bool = jsonObject.getBoolean("bool");
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "agreeGroupRequest");
+                        intent.putExtra("groupMemberId",groupMemberId);
+                        intent.putExtra("bool",bool);
+                        sendContent(intent);
+                    }else if ("getGroupHead".equals(command)){
+                        int groupId = jsonObject.getInt("groupId");
+                        String encode = jsonObject.getString("encode");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            byte[] decode = Base64.getDecoder().decode(encode);
+                            FileOutputStream outputStream;
+                            try {
+                                outputStream = new FileOutputStream(this.getExternalFilesDir("image/group").getAbsolutePath()+groupId+".sf");
+                                outputStream.write(decode);
+                                outputStream.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "getGroupHead");
+                        intent.putExtra("groupId",groupId);
+                        sendContent(intent);
                     }
                 }
             }catch (Exception e){
@@ -442,6 +474,17 @@ public class TCPService extends Service {
         send(jsonObject);
     }
 
+    public void agreeGroupRequest(int groupMemberId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","agreeGroupRequest");
+            jsonObject.put("groupMemberId",groupMemberId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
     public void selectGroup(String condition){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -468,6 +511,17 @@ public class TCPService extends Service {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("command","addGroupRequest");
+            jsonObject.put("groupId",groupId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void getGroupHead(int groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getGroupHead");
             jsonObject.put("groupId",groupId);
         } catch (JSONException e) {
             e.printStackTrace();

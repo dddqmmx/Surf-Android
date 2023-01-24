@@ -217,9 +217,10 @@ public class Main extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_create_group:
-                Intent chatInteger = new Intent(Main.this, GroupInfo.class);
+                /*Intent chatInteger = new Intent(Main.this, GroupInfo.class);
                 chatInteger.putExtra("id",1);
-                Main.this.startActivity(chatInteger);
+                Main.this.startActivity(chatInteger);*/
+                service.getGroupHead(2);
                 break;
             case R.id.menu_add_group_or_friend:
                 Main.this.startActivity(new Intent(this,AddFriendAndGroup.class));

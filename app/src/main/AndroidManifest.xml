@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-
     <application
         android:name=".util.Client"
         android:allowBackup="true"
@@ -49,7 +48,6 @@
             android:name=".service.TCPService"
             android:enabled="true"
             android:exported="false" />
-        <service android:name=".service.UpdateChatMessageService" />
 
         <activity
             android:name=".DeveloperOption"

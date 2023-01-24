@@ -28,6 +28,9 @@ public class Load extends AppCompatActivity {
         /*读取配置文件或加载插件
         禁止进行联网操作*/
 
+        String filePath = this.getExternalFilesDir(null).getAbsolutePath();
+
+
         setContentView(R.layout.activity_load);
 
         startActivity(new Intent(this,Login.class));
