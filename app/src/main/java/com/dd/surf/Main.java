@@ -9,12 +9,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +29,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
+import com.dd.surf.util.BitMapUtil;
 import com.dd.surf.util.Client;
 import com.dd.surf.view.util.adapter.AdapterMain;
 import com.google.android.material.tabs.TabLayout;
@@ -161,6 +166,7 @@ public class Main extends AppCompatActivity {
                             String groupName = jsonObject.getString("groupName");
                             Client.groupList.add(id);
                             adapterMain.addGroup(id,groupName);
+                            service.getGroupHead(id);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -201,8 +207,17 @@ public class Main extends AppCompatActivity {
                         adapterMain.addFriend(id);
                     }
                     break;
-                case "":
-
+                case "getGroupHead":
+                    int groupId = intent.getIntExtra("groupId", 0);
+                    for (int i = 0 ; i < adapterMain.messageListLayout.getChildCount();i++){
+                        View child = adapterMain.messageListLayout.getChildAt(i);
+                        if (child.getId() == R.id.message_root){
+                            if (child.getContentDescription() == String.valueOf(groupId)){
+                                ImageView head = child.findViewById(R.id.head);
+                                head.setImageBitmap(BitMapUtil.openImage(Main.this.getExternalFilesDir("image/group/").getAbsolutePath()+"/"+groupId+".sf"));
+                            }
+                        }
+                    }
             }
         }
     }
@@ -220,7 +235,7 @@ public class Main extends AppCompatActivity {
                 /*Intent chatInteger = new Intent(Main.this, GroupInfo.class);
                 chatInteger.putExtra("id",1);
                 Main.this.startActivity(chatInteger);*/
-                service.getGroupHead(2);
+
                 break;
             case R.id.menu_add_group_or_friend:
                 Main.this.startActivity(new Intent(this,AddFriendAndGroup.class));

@@ -14,6 +14,7 @@ import com.dd.surf.util.Client;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -302,7 +303,7 @@ public class TCPService extends Service {
                             byte[] decode = Base64.getDecoder().decode(encode);
                             FileOutputStream outputStream;
                             try {
-                                outputStream = new FileOutputStream(this.getExternalFilesDir("image/group").getAbsolutePath()+groupId+".sf");
+                                outputStream = new FileOutputStream(this.getExternalFilesDir("image/group").getAbsolutePath()+"/"+groupId+".sf");
                                 outputStream.write(decode);
                                 outputStream.close();
                             } catch (Exception e) {

@@ -97,6 +97,7 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
 
     public void addGroup(int id,String groupName){
         View messageView = layoutInflater.inflate(R.layout.view_message,null);
+        messageView.setContentDescription(String.valueOf(id));
         TextView nameText = messageView.findViewById(R.id.name);
         nameText.setText(groupName);
         messageListLayout.addView(messageView);

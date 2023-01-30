@@ -4,12 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp">
-    <com.dd.surf.view.ClipPathCircleView
+<!--    <com.dd.surf.view.ClipPathCircleView
         android:id="@+id/head"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/default_head">
-    </com.dd.surf.view.ClipPathCircleView>
+    </com.dd.surf.view.ClipPathCircleView>-->
+
+    <ImageView
+        android:id="@+id/head"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/default_head"/>
 
     <RelativeLayout
         android:layout_centerVertical="true"
