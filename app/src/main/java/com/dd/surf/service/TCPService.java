@@ -10,13 +10,17 @@ import android.os.IBinder;
 import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.util.Client;
+import com.dd.surf.util.MessageUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +29,13 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -36,8 +46,23 @@ public class TCPService extends Service {
     public Thread tcpThread = null;
 
     public Socket socket = null;
+    public BufferedInputStream bufferedInputStream = null;
 
     private final int port = 2042;
+
+    public static Map<Byte,ByteArrayOutputStream> byteArrayOutputStreamMap = new HashMap<>();
+
+
+    //被占用的的messageId
+    public byte[] occupiedMessageId = new byte[256];
+    /*字节的最大上限如果发送消息的时候messageId等于maxMessageId则把message设置为minMessageId
+    因为以后可能会改成int,long啥的就把max和min写上了
+     */
+    public byte maxMessageId = 127;
+    //字节的最小上限;
+    public byte minMessageId = -128;
+    //存储下个message的
+    public byte messageId = -128;
 
     public TCPService() {
     }
@@ -67,6 +92,7 @@ public class TCPService extends Service {
         FutureTask<Boolean> future = new FutureTask<>(() -> {
             try {
                 socket = new Socket(host, port);
+                bufferedInputStream = new BufferedInputStream(socket.getInputStream());
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -100,7 +126,51 @@ public class TCPService extends Service {
 
     public void createTcpThread() {
         tcpThread = new Thread(()-> {
-            String line = null;
+            int o = 0;
+            while(true) {
+                byte[] by = new byte[1024+2];
+                int res = 0;
+                try {
+                    res = bufferedInputStream.read(by);
+                    if (by[1]==1){
+                        byte messageId = by[0];
+                        // 利用String构造方法的形式，将字节数组转化成字符串打印出来
+                        if (byteArrayOutputStreamMap.containsKey(messageId)){
+                            ByteArrayOutputStream byteArrayOutputStream = byteArrayOutputStreamMap.get(messageId);
+                            byteArrayOutputStream.write(by,2,res-2);
+                            byteArrayOutputStream.flush();
+                            byteArrayOutputStream.close();
+                        }else{
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            byteArrayOutputStream.write(by,2,res-2);
+                            byteArrayOutputStream.flush();
+                            byteArrayOutputStream.close();
+                            byteArrayOutputStreamMap.put(messageId,byteArrayOutputStream);
+                        }
+                        StringBuffer sb = new StringBuffer();
+                        for (int i = 0; i < by.length; i++)
+                        {
+                            sb.append("{"+by[i]+"},");
+                        }
+                        System.out.println(sb);
+                        System.out.println("ssss"+Arrays.toString(byteArrayOutputStreamMap.get(messageId).toByteArray()));
+                        System.out.println(byteArrayOutputStreamMap.get(messageId).toString("UTF-8"));
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "test");
+                        intent.putExtra("message", byteArrayOutputStreamMap.get(messageId).toString("UTF-8"));
+                        sendContent(intent);
+                    /*System.out.println(sb);
+                    String receive = new String(by, 2, res);
+                    System.out.println("用户" + sendUser + "\t" + format + ":");
+                    System.out.println(receive);*/
+                    }
+                    System.out.println(o++);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+  /*          String line = null;
             try {
                 //while是抄的写的非常好
                 while ((line = getLine()) != null) {
@@ -319,7 +389,7 @@ public class TCPService extends Service {
                 }
             }catch (Exception e){
                 e.printStackTrace();
-            }
+            }*/
         });
     }
 
@@ -538,7 +608,7 @@ public class TCPService extends Service {
         sendBroadcast(intent);
     }
 
-    public void send(String json){
+   /* public void send(String json){
         try {
             OutputStreamWriter outputStream = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
             PrintWriter printWriter = new PrintWriter(outputStream,true);
@@ -548,11 +618,38 @@ public class TCPService extends Service {
         }
 
     }
+
+    */
     public void send(Object object){
         send(object.toString());
     }
 
-    protected String getLine(){
+    public void send(String message){
+        byte[] sb = message.getBytes(); // 转化为字节数组
+        ArrayList<byte[]> newByteArr = MessageUtil.reviseArr(sb, getMessageId());
+        int i = 0;
+        for (byte[] bytes : newByteArr) {
+            System.out.println(i++);
+            System.out.println(Arrays.toString(bytes));
+            BufferedOutputStream ps = null;
+            try {
+                ps = new BufferedOutputStream(socket.getOutputStream());
+                ps.write(bytes);   // 写入输出流，将内容发送给客户端的输入流
+                ps.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public byte getMessageId(){
+        if (messageId == maxMessageId){
+            messageId =  minMessageId;
+        }
+        return messageId++;
+    }
+
+    /*protected String getLine(){
         //从socket通信管道中得到一个字节输入流
         InputStream is = null;
         try {
@@ -571,6 +668,6 @@ public class TCPService extends Service {
             e.printStackTrace();
         }
         return line;
-    }
+    }*/
 
 }

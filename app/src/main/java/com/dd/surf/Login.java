@@ -51,6 +51,7 @@ public class Login extends AppCompatActivity {
         ImageButton imageButton = findViewById(R.id.login_button);
         imageButton.setOnClickListener((view)->{
             service.initialization();
+            service.send("臭泔水湊あくあ");
         });
 
         //这是启动开发者选项的事件
@@ -119,6 +120,9 @@ public class Login extends AppCompatActivity {
                         makeText(context,"登录失败"+message, LENGTH_LONG).show();
                     }
                     break;
+                case "test":
+                    String msg = intent.getStringExtra("message");
+                    userName.setText(msg);
             }
         }
     }
