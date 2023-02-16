@@ -156,6 +156,7 @@ public class Main extends AppCompatActivity {
                     adapterMain.name.setText(user.getName());
                     adapterMain.userName.setText(user.getUserName());
                     service.getGroupList();
+                    //service.getUserFriend();
                     break;
                 case "getGroupList":
                     try {
@@ -166,7 +167,7 @@ public class Main extends AppCompatActivity {
                             String groupName = jsonObject.getString("groupName");
                             Client.groupList.add(id);
                             adapterMain.addGroup(id,groupName);
-                            service.getGroupHead(id);
+                            //service.getGroupHead(id);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -235,7 +236,7 @@ public class Main extends AppCompatActivity {
                 /*Intent chatInteger = new Intent(Main.this, GroupInfo.class);
                 chatInteger.putExtra("id",1);
                 Main.this.startActivity(chatInteger);*/
-
+                service.getGroupHead(1);
                 break;
             case R.id.menu_add_group_or_friend:
                 Main.this.startActivity(new Intent(this,AddFriendAndGroup.class));

@@ -51,7 +51,7 @@ public class Login extends AppCompatActivity {
         ImageButton imageButton = findViewById(R.id.login_button);
         imageButton.setOnClickListener((view)->{
             service.initialization();
-            service.send("臭泔水湊あくあ");
+            service.login(userName.getText().toString(), password.getText().toString());
         });
 
         //这是启动开发者选项的事件

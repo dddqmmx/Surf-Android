@@ -11,6 +11,7 @@ import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.util.Client;
 import com.dd.surf.util.MessageUtil;
+import com.dd.surf.util.NumberUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,14 +21,19 @@ import org.json.JSONTokener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +46,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class TCPService extends Service {
 
@@ -126,271 +133,299 @@ public class TCPService extends Service {
 
     public void createTcpThread() {
         tcpThread = new Thread(()-> {
-            int o = 0;
-            while(true) {
-                byte[] by = new byte[1024+2];
-                int res = 0;
-                try {
-                    res = bufferedInputStream.read(by);
-                    if (by[1]==1){
-                        byte messageId = by[0];
-                        // 利用String构造方法的形式，将字节数组转化成字符串打印出来
-                        if (byteArrayOutputStreamMap.containsKey(messageId)){
-                            ByteArrayOutputStream byteArrayOutputStream = byteArrayOutputStreamMap.get(messageId);
-                            byteArrayOutputStream.write(by,2,res-2);
-                            byteArrayOutputStream.flush();
-                            byteArrayOutputStream.close();
-                        }else{
-                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                            byteArrayOutputStream.write(by,2,res-2);
-                            byteArrayOutputStream.flush();
-                            byteArrayOutputStream.close();
-                            byteArrayOutputStreamMap.put(messageId,byteArrayOutputStream);
-                        }
-                        StringBuffer sb = new StringBuffer();
-                        for (int i = 0; i < by.length; i++)
+            try {
+                InputStream inputStream = socket.getInputStream();
+                byte[] buffer = new byte[1024];
+                int length;
+                byte[] messageBytes = new byte[0];
+                while ((length = inputStream.read(buffer)) != -1) {
+                    // 将读取到的字节流拼接到之前的消息字节数组中
+                    messageBytes = Arrays.copyOf(messageBytes, messageBytes.length + length);
+                    System.arraycopy(buffer, 0, messageBytes, messageBytes.length - length, length);
+
+                    // 如果读取到的字节流中包含完整的消息，则将其分离出来并处理
+                    while (messageBytes.length >= 4) {
+                        byte[] messageHeader = Arrays.copyOfRange(messageBytes, 0, 4); // 取前 4 个字节作为消息头
+                        ByteBuffer buffer1 = ByteBuffer.wrap(messageHeader); // 使用 ByteBuffer 对消息头进行解析
+                        int messageLength = buffer1.getInt(); // 解析消息头中的消息长度
+                        //byte[] messageData = Arrays.copyOfRange(messageBytes, 4, 4 + messageLength);
+                        // 如果读取到的字节流中包含完整的消息，则将其分离出来并处理
+                        if (messageBytes.length >= 4 + messageLength)
                         {
-                            sb.append("{"+by[i]+"},");
+                            byte[] message = Arrays.copyOfRange(messageBytes, 4, 4 + messageLength);
+                            processMessage(message);
+                            messageBytes = Arrays.copyOfRange(messageBytes, 4 + messageLength, messageBytes.length);
+                        } else {
+                            break;
                         }
-                        System.out.println(sb);
-                        System.out.println("ssss"+Arrays.toString(byteArrayOutputStreamMap.get(messageId).toByteArray()));
-                        System.out.println(byteArrayOutputStreamMap.get(messageId).toString("UTF-8"));
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "test");
-                        intent.putExtra("message", byteArrayOutputStreamMap.get(messageId).toString("UTF-8"));
-                        sendContent(intent);
-                    /*System.out.println(sb);
-                    String receive = new String(by, 2, res);
-                    System.out.println("用户" + sendUser + "\t" + format + ":");
-                    System.out.println(receive);*/
                     }
-                    System.out.println(o++);
-                } catch (IOException e) {
+                }
+            } catch (IOException | JSONException e) {
+                throw new RuntimeException(e);
+            }
+            /*while(true) {
+                byte[] by = new byte[1024+3];        //保存包里的字节
+                int res = 0;                         //字节长度
+                byte messageId;                      //消息id
+                ByteArrayOutputStream byteArrayOutputStream;    //把分段发送的字节存到这里,用来读取
+                String command;                                 //消息发完消息字符串放在这里
+                byte transferCompleteFlag;                      //消息是否发完的标记
+                try {
+
+
+                    String line;
+                    while ((line = bufferedInputStream) != null) {
+                        System.out.println(line);
+                    }
+
+                    *//*StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < by.length; i++)
+                    {
+                        sb.append("{").append(by[i]).append("},");
+                    }*//*
+                } catch (IOException | JSONException e) {
                     throw new RuntimeException(e);
                 }
-            }
-  /*          String line = null;
-            try {
-                //while是抄的写的非常好
-                while ((line = getLine()) != null) {
-                    System.out.println(line);
-                    JSONObject jsonObject = new JSONObject(line);
-                    String command = jsonObject.getString("command");
-                    if ("connect".equals(command)) {
-                        String sessionId = jsonObject.getString("sessionId");
-                        Client.setSessionId(sessionId);
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "connect");
-                        intent.putExtra("value",!"".equals(sessionId));
-                        sendContent(intent);
-                    } else if("login".equals(command)) {
-                        boolean login = jsonObject.getBoolean("login");
-                        String message = jsonObject.getString("message");
-                        Client.userId = jsonObject.getInt("id");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "login");
-                        intent.putExtra("login", login);
-                        intent.putExtra("message", message);
-                        sendContent(intent);
-                    } else if ("getUserInfo".equals(command)) {
-                        String userName = jsonObject.getString("userName");
-                        String name = jsonObject.getString("name");
-                        User user = new User();
-                        user.setId(Client.userId);
-                        user.setUserName(userName);
-                        user.setName(name);
-                        Client.setUser(Client.userId,user);
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getUserInfo");
-                        sendContent(intent);
-                    } else if ("getGroupList".equals(command)) {
-                        JSONArray groupList = jsonObject.getJSONArray("groupList");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getGroupList");
-                        intent.putExtra("groupList",groupList.toString());
-                        sendContent(intent);
-                    } else if ("getUserFriendList".equals(command)){
-                        JSONArray userList = jsonObject.getJSONArray("userList");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getUserFriendList");
-                        intent.putExtra("userList",userList.toString());
-                        sendContent(intent);
-                    } else if ("getGroupInfo".equals(command)){
-                        String groupName = jsonObject.getString("groupName");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getGroupInfo");
-                        intent.putExtra("groupName", groupName);
-                        sendContent(intent);
-                    } else if ("getGroupMessage".equals(command)){
-                        JSONArray messageList = jsonObject.getJSONArray("messageList");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getGroupMessage");
-                        intent.putExtra("messageList",messageList.toString());
-                        sendContent(intent);
-                    } else if ("getUserInfoById".equals(command)){
-                        int id = jsonObject.getInt("id");
-                        String userName = jsonObject.getString("userName");
-                        String name = jsonObject.getString("name");
-                        String personalProfile = null;
-                        if (jsonObject.has("personalProfile")){
-                            personalProfile = jsonObject.getString("personalProfile");
-                        }
-                        User user = new User();
-                        user.setId(id);
-                        user.setUserName(userName);
-                        user.setName(name);
-                        user.setPersonalProfile(personalProfile);
-                        if (Client.hasUser(id)){
-                            User clientUser = Client.getUser(id);
-                            if (!clientUser.equals(user)){
-                                Client.setUser(id,user);
-                            }
-                        }else {
-                            Client.setUser(id,user);
-                        }
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getUserInfoById");
-                        intent.putExtra("id",user.getId());
-                        intent.putExtra("userName",user.getUserName());
-                        intent.putExtra("name",user.getName());
-                        intent.putExtra("personalProfile",user.getPersonalProfile());
-                        sendContent(intent);
-                    } else if ("processMessage".equals(command)){
-                        int sender = jsonObject.getInt("sender");
-                        String message = jsonObject.getString("message");
-                        int contactType = jsonObject.getInt("contactType");
-                        int contactId = jsonObject.getInt("contactId");
-                        if (contactType == 1){
-                            Intent intent=new Intent();
-                            intent.setAction("com.dd.surf.service.tcpClient");
-                            intent.putExtra("command", "GroupMessage");
-                            intent.putExtra("contactId",contactId);
-                            intent.putExtra("sender",sender);
-                            intent.putExtra("message",message);
-                            sendContent(intent);
-                        }
-                    } else if ("addFriendRequest".equals(command)){
-                        int code = jsonObject.getInt("code");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "addFriendRequest");
-                        intent.putExtra("code",code);
-                        sendContent(intent);
-                    } else if ("getFriendRequest".equals(command)){
-                        JSONArray relationArray = jsonObject.getJSONArray("relationArray");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getFriendRequest");
-                        intent.putExtra("relationArray",relationArray.toString());
-                        sendContent(intent);
-                    } else if ("agreeFriendRequest".equals(command)){
-                        int id = jsonObject.getInt("id");
-                        int code = jsonObject.getInt("code");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "agreeFriendRequest");
-                        intent.putExtra("id",id);
-                        intent.putExtra("code",code);
-                        sendContent(intent);
-                    } else if ("selectGroup".equals(command)){
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "selectGroup");
-                        JSONArray relationArray = jsonObject.getJSONArray("groupList");
-                        intent.putExtra("groupList",relationArray.toString());
-                        sendContent(intent);
-                    } else if ("selectUser".equals(command)){
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "selectUser");
-                        JSONArray relationArray = jsonObject.getJSONArray("userList");
-                        intent.putExtra("userList",relationArray.toString());
-                        sendContent(intent);
-                    }else if ("getGroupInfoById".equals(command)) {
-                        int id = jsonObject.getInt("id");
-                        String groupName = jsonObject.getString("groupName");
-                        String groupHead = null;
-                        if (jsonObject.has("groupHead")){
-                            groupHead = jsonObject.getString("groupHead");
-                        }
-                        Group group = new Group();
-                        group.setId(id);
-                        group.setGroupName(groupName);
-                        group.setGroupHead(groupHead);
-                        if (Client.hasGroupInfo(id)) {
-                            Group clientGroup = Client.getGroupInfo(id);
-                            if (!clientGroup.equals(group)) {
-                                Client.setGroupInfo(id, group);
-                            }
-                        } else {
-                            Client.setGroupInfo(id, group);
-                        }
-                        Intent intent = new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getGroupInfoById");
-                        intent.putExtra("id", group.getId());
-                        intent.putExtra("groupName", group.getGroupName());
-                        intent.putExtra("groupHead", group.getGroupHead());
-                        sendContent(intent);
-                    }else if("addGroupRequest".equals(command)){
-                        int id = jsonObject.getInt("id");
-                        int code = jsonObject.getInt("code");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "addGroupRequest");
-                        intent.putExtra("id",id);
-                        intent.putExtra("code",code);
-                        sendContent(intent);
-                    }else if("getGroupRequest".equals(command)){
-                        JSONArray relationArray = jsonObject.getJSONArray("relationArray");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getGroupRequest");
-                        intent.putExtra("relationArray",relationArray.toString());
-                        sendContent(intent);
-                    } else if ("agreeGroupRequest".equals(command)){
-                        int groupMemberId = jsonObject.getInt("groupMemberId");
-                        boolean bool = jsonObject.getBoolean("bool");
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "agreeGroupRequest");
-                        intent.putExtra("groupMemberId",groupMemberId);
-                        intent.putExtra("bool",bool);
-                        sendContent(intent);
-                    }else if ("getGroupHead".equals(command)){
-                        int groupId = jsonObject.getInt("groupId");
-                        String encode = jsonObject.getString("encode");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            byte[] decode = Base64.getDecoder().decode(encode);
-                            FileOutputStream outputStream;
-                            try {
-                                outputStream = new FileOutputStream(this.getExternalFilesDir("image/group").getAbsolutePath()+"/"+groupId+".sf");
-                                outputStream.write(decode);
-                                outputStream.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        Intent intent=new Intent();
-                        intent.setAction("com.dd.surf.service.tcpClient");
-                        intent.putExtra("command", "getGroupHead");
-                        intent.putExtra("groupId",groupId);
-                        sendContent(intent);
-                    }
-                }
-            }catch (Exception e){
-                e.printStackTrace();
             }*/
         });
+    }
+
+    private void processMessage(byte[] bytes) throws IOException, JSONException {
+        byte messageId = bytes[0];
+        byte transferCompleteFlag = bytes[2];
+        if (bytes[1]==1){
+            if (byteArrayOutputStreamMap.containsKey(messageId)){
+                ByteArrayOutputStream byteArrayOutputStream = byteArrayOutputStreamMap.get(messageId);
+                byteArrayOutputStream.write(bytes,3,bytes.length-3);
+                byteArrayOutputStream.flush();
+                byteArrayOutputStream.close();
+            }else{
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                byteArrayOutputStream.write(bytes,3,bytes.length-3);
+                byteArrayOutputStream.flush();
+                byteArrayOutputStream.close();
+                byteArrayOutputStreamMap.put(messageId,byteArrayOutputStream);
+            }
+            if (transferCompleteFlag == 1){
+                System.out.println(Arrays.toString(byteArrayOutputStreamMap.get(messageId).toByteArray()));
+                String msg = byteArrayOutputStreamMap.get(messageId).toString("UTF-8");
+                JSONObject jsonObject = new JSONObject(msg);
+                String command = jsonObject.getString("command");
+                if ("connect".equals(command)) {
+                    String sessionId = jsonObject.getString("sessionId");
+                    Client.setSessionId(sessionId);
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "connect");
+                    intent.putExtra("value",!"".equals(sessionId));
+                    sendContent(intent);
+                } else if("login".equals(command)) {
+                    boolean login = jsonObject.getBoolean("login");
+                    String message = jsonObject.getString("message");
+                    Client.userId = jsonObject.getInt("id");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "login");
+                    intent.putExtra("login", login);
+                    intent.putExtra("message", message);
+                    sendContent(intent);
+                } else if ("getUserInfo".equals(command)) {
+                    String userName = jsonObject.getString("userName");
+                    String name = jsonObject.getString("name");
+                    User user = new User();
+                    user.setId(Client.userId);
+                    user.setUserName(userName);
+                    user.setName(name);
+                    Client.setUser(Client.userId,user);
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getUserInfo");
+                    sendContent(intent);
+                } else if ("getGroupList".equals(command)) {
+                    JSONArray groupList = jsonObject.getJSONArray("groupList");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getGroupList");
+                    intent.putExtra("groupList",groupList.toString());
+                    sendContent(intent);
+                } else if ("getUserFriendList".equals(command)){
+                    JSONArray userList = jsonObject.getJSONArray("userList");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getUserFriendList");
+                    intent.putExtra("userList",userList.toString());
+                    sendContent(intent);
+                } else if ("getGroupInfo".equals(command)){
+                    String groupName = jsonObject.getString("groupName");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getGroupInfo");
+                    intent.putExtra("groupName", groupName);
+                    sendContent(intent);
+                } else if ("getGroupMessage".equals(command)){
+                    JSONArray messageList = jsonObject.getJSONArray("messageList");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getGroupMessage");
+                    intent.putExtra("messageList",messageList.toString());
+                    sendContent(intent);
+                } else if ("getUserInfoById".equals(command)){
+                    int id = jsonObject.getInt("id");
+                    String userName = jsonObject.getString("userName");
+                    String name = jsonObject.getString("name");
+                    String personalProfile = null;
+                    if (jsonObject.has("personalProfile")){
+                        personalProfile = jsonObject.getString("personalProfile");
+                    }
+                    User user = new User();
+                    user.setId(id);
+                    user.setUserName(userName);
+                    user.setName(name);
+                    user.setPersonalProfile(personalProfile);
+                    if (Client.hasUser(id)){
+                        User clientUser = Client.getUser(id);
+                        if (!clientUser.equals(user)){
+                            Client.setUser(id,user);
+                        }
+                    }else {
+                        Client.setUser(id,user);
+                    }
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getUserInfoById");
+                    intent.putExtra("id",user.getId());
+                    intent.putExtra("userName",user.getUserName());
+                    intent.putExtra("name",user.getName());
+                    intent.putExtra("personalProfile",user.getPersonalProfile());
+                    sendContent(intent);
+                } else if ("processMessage".equals(command)){
+                    int sender = jsonObject.getInt("sender");
+                    String message = jsonObject.getString("message");
+                    int contactType = jsonObject.getInt("contactType");
+                    int contactId = jsonObject.getInt("contactId");
+                    if (contactType == 1){
+                        Intent intent=new Intent();
+                        intent.setAction("com.dd.surf.service.tcpClient");
+                        intent.putExtra("command", "GroupMessage");
+                        intent.putExtra("contactId",contactId);
+                        intent.putExtra("sender",sender);
+                        intent.putExtra("message",message);
+                        sendContent(intent);
+                    }
+                } else if ("addFriendRequest".equals(command)){
+                    int code = jsonObject.getInt("code");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "addFriendRequest");
+                    intent.putExtra("code",code);
+                    sendContent(intent);
+                } else if ("getFriendRequest".equals(command)){
+                    JSONArray relationArray = jsonObject.getJSONArray("relationArray");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getFriendRequest");
+                    intent.putExtra("relationArray",relationArray.toString());
+                    sendContent(intent);
+                } else if ("agreeFriendRequest".equals(command)){
+                    int id = jsonObject.getInt("id");
+                    int code = jsonObject.getInt("code");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "agreeFriendRequest");
+                    intent.putExtra("id",id);
+                    intent.putExtra("code",code);
+                    sendContent(intent);
+                } else if ("selectGroup".equals(command)){
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "selectGroup");
+                    JSONArray relationArray = jsonObject.getJSONArray("groupList");
+                    intent.putExtra("groupList",relationArray.toString());
+                    sendContent(intent);
+                } else if ("selectUser".equals(command)){
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "selectUser");
+                    JSONArray relationArray = jsonObject.getJSONArray("userList");
+                    intent.putExtra("userList",relationArray.toString());
+                    sendContent(intent);
+                }else if ("getGroupInfoById".equals(command)) {
+                    int id = jsonObject.getInt("id");
+                    String groupName = jsonObject.getString("groupName");
+                    String groupHead = null;
+                    if (jsonObject.has("groupHead")){
+                        groupHead = jsonObject.getString("groupHead");
+                    }
+                    Group group = new Group();
+                    group.setId(id);
+                    group.setGroupName(groupName);
+                    group.setGroupHead(groupHead);
+                    if (Client.hasGroupInfo(id)) {
+                        Group clientGroup = Client.getGroupInfo(id);
+                        if (!clientGroup.equals(group)) {
+                            Client.setGroupInfo(id, group);
+                        }
+                    } else {
+                        Client.setGroupInfo(id, group);
+                    }
+                    Intent intent = new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getGroupInfoById");
+                    intent.putExtra("id", group.getId());
+                    intent.putExtra("groupName", group.getGroupName());
+                    intent.putExtra("groupHead", group.getGroupHead());
+                    sendContent(intent);
+                }else if("addGroupRequest".equals(command)){
+                    int id = jsonObject.getInt("id");
+                    int code = jsonObject.getInt("code");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "addGroupRequest");
+                    intent.putExtra("id",id);
+                    intent.putExtra("code",code);
+                    sendContent(intent);
+                }else if("getGroupRequest".equals(command)){
+                    JSONArray relationArray = jsonObject.getJSONArray("relationArray");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getGroupRequest");
+                    intent.putExtra("relationArray",relationArray.toString());
+                    sendContent(intent);
+                } else if ("agreeGroupRequest".equals(command)){
+                    int groupMemberId = jsonObject.getInt("groupMemberId");
+                    boolean bool = jsonObject.getBoolean("bool");
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "agreeGroupRequest");
+                    intent.putExtra("groupMemberId",groupMemberId);
+                    intent.putExtra("bool",bool);
+                    sendContent(intent);
+                }else if ("getGroupHead".equals(command)){
+                    int groupId = jsonObject.getInt("groupId");
+                    String encode = jsonObject.getString("encode");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        byte[] decode = Base64.getDecoder().decode(encode);
+                        FileOutputStream outputStream;
+                        try {
+                            outputStream = new FileOutputStream(this.getExternalFilesDir("image/group").getAbsolutePath()+"/"+groupId+".sf");
+                            outputStream.write(decode);
+                            outputStream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Intent intent=new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getGroupHead");
+                    intent.putExtra("groupId",groupId);
+                    sendContent(intent);
+                }
+                System.out.println("message : "+msg);
+                byteArrayOutputStreamMap.remove(messageId);
+            }
+        }
+        System.out.println("我是大傻逼 : "+Arrays.toString(bytes));
+
     }
 
     public void connect(){
@@ -625,30 +660,45 @@ public class TCPService extends Service {
     }
 
     public void send(String message){
+        byte messageId = getMessageId();
+        System.out.println("Server send : "+messageId+" : "+message);
         byte[] sb = message.getBytes(); // 转化为字节数组
-        ArrayList<byte[]> newByteArr = MessageUtil.reviseArr(sb, getMessageId());
-        int i = 0;
+        ArrayList<byte[]> newByteArr = MessageUtil.reviseArr(sb, messageId);
         for (byte[] bytes : newByteArr) {
-            System.out.println(i++);
-            System.out.println(Arrays.toString(bytes));
-            BufferedOutputStream ps = null;
             try {
-                ps = new BufferedOutputStream(socket.getOutputStream());
-                ps.write(bytes);   // 写入输出流，将内容发送给客户端的输入流
+                BufferedOutputStream ps = new BufferedOutputStream(socket.getOutputStream());
+                System.out.println(Arrays.toString(bytes));
+                //
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+                dataOutputStream.writeInt(bytes.length);
+                System.out.println(bytes.length);
+                dataOutputStream.write(bytes);
+                dataOutputStream.flush();
+                byte[] messageBytes = byteArrayOutputStream.toByteArray();
+                //
+                ps.write(messageBytes);   // 写入输出流，将内容发送给客户端的输入流
                 ps.flush();
+                //ps.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            /*try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }*/
         }
     }
 
-    public byte getMessageId(){
-        if (messageId == maxMessageId){
-            messageId =  minMessageId;
+    public byte getMessageId() {
+        synchronized (this) {
+            if (messageId == maxMessageId) {
+                messageId = minMessageId;
+            }
+            return messageId++;
         }
-        return messageId++;
     }
-
     /*protected String getLine(){
         //从socket通信管道中得到一个字节输入流
         InputStream is = null;
