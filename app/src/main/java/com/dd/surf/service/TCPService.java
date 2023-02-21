@@ -1,7 +1,6 @@
 package com.dd.surf.service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
@@ -11,42 +10,29 @@ import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.util.Client;
 import com.dd.surf.util.MessageUtil;
-import com.dd.surf.util.NumberUtil;
+import com.dd.surf.util.SaveParameter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 public class TCPService extends Service {
 
@@ -58,6 +44,8 @@ public class TCPService extends Service {
     private final int port = 2042;
 
     public static Map<Byte,ByteArrayOutputStream> byteArrayOutputStreamMap = new HashMap<>();
+
+    public static Map<Byte, SaveParameter> byteArraySaveParameterMap = new HashMap<>();
 
 
     //被占用的的messageId
@@ -359,7 +347,6 @@ public class TCPService extends Service {
                     Group group = new Group();
                     group.setId(id);
                     group.setGroupName(groupName);
-                    group.setGroupHead(groupHead);
                     if (Client.hasGroupInfo(id)) {
                         Group clientGroup = Client.getGroupInfo(id);
                         if (!clientGroup.equals(group)) {
@@ -373,7 +360,6 @@ public class TCPService extends Service {
                     intent.putExtra("command", "getGroupInfoById");
                     intent.putExtra("id", group.getId());
                     intent.putExtra("groupName", group.getGroupName());
-                    intent.putExtra("groupHead", group.getGroupHead());
                     sendContent(intent);
                 }else if("addGroupRequest".equals(command)){
                     int id = jsonObject.getInt("id");
@@ -402,8 +388,10 @@ public class TCPService extends Service {
                     sendContent(intent);
                 }else if ("getGroupHead".equals(command)){
                     int groupId = jsonObject.getInt("groupId");
-                    String encode = jsonObject.getString("encode");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    byte fileMessageId = (byte) jsonObject.getInt("fileMessageId");
+
+                    System.out.println(groupId+" "+fileMessageId);
+                    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         byte[] decode = Base64.getDecoder().decode(encode);
                         FileOutputStream outputStream;
                         try {
@@ -418,9 +406,35 @@ public class TCPService extends Service {
                     intent.setAction("com.dd.surf.service.tcpClient");
                     intent.putExtra("command", "getGroupHead");
                     intent.putExtra("groupId",groupId);
-                    sendContent(intent);
+                    sendContent(intent);*/
                 }
                 System.out.println("message : "+msg);
+                byteArrayOutputStreamMap.remove(messageId);
+            }
+        }else if (bytes[1] == 2){
+            if (byteArrayOutputStreamMap.containsKey(messageId)){
+                ByteArrayOutputStream byteArrayOutputStream = byteArrayOutputStreamMap.get(messageId);
+                byteArrayOutputStream.write(bytes,3,bytes.length-3);
+                byteArrayOutputStream.flush();
+                byteArrayOutputStream.close();
+            }else{
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                byteArrayOutputStream.write(bytes,3,bytes.length-3);
+                byteArrayOutputStream.flush();
+                byteArrayOutputStream.close();
+                byteArrayOutputStreamMap.put(messageId,byteArrayOutputStream);
+            }
+            if (transferCompleteFlag == 1){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    FileOutputStream outputStream;
+                    try {
+                        /*outputStream = new FileOutputStream(this.getExternalFilesDir("").getAbsolutePath()+"/"+groupId+".sf");
+                        outputStream.write(decode);
+                        outputStream.close();*/
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 byteArrayOutputStreamMap.remove(messageId);
             }
         }

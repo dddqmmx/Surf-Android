@@ -167,7 +167,7 @@ public class Main extends AppCompatActivity {
                             String groupName = jsonObject.getString("groupName");
                             Client.groupList.add(id);
                             adapterMain.addGroup(id,groupName);
-                            //service.getGroupHead(id);
+                            service.getGroupHead(id);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

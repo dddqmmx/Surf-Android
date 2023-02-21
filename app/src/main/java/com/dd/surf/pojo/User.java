@@ -7,8 +7,9 @@ public class User implements Serializable {
     private String userName;
     private String password;
     private String name;
-
     private String personalProfile;
+    private int avatar;
+
     public Integer getId() {
         return id;
     }
@@ -45,8 +46,16 @@ public class User implements Serializable {
         return personalProfile;
     }
 
-    public void setPersonalProfile(String personal_profile) {
-        this.personalProfile = personal_profile;
+    public void setPersonalProfile(String personalProfile) {
+        this.personalProfile = personalProfile;
+    }
+
+    public int getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(int avatar) {
+        this.avatar = avatar;
     }
 
     @Override
@@ -57,6 +66,7 @@ public class User implements Serializable {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", personalProfile='" + personalProfile + '\'' +
+                ", avatar=" + avatar +
                 '}';
     }
 }
