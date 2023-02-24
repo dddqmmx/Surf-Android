@@ -195,7 +195,7 @@ public class TCPService extends Service {
                 byteArrayOutputStreamMap.put(messageId,byteArrayOutputStream);
             }
             if (transferCompleteFlag == 1){
-                System.out.println(Arrays.toString(byteArrayOutputStreamMap.get(messageId).toByteArray()));
+                //System.out.println(Arrays.toString(byteArrayOutputStreamMap.get(messageId).toByteArray()));
                 String msg = byteArrayOutputStreamMap.get(messageId).toString("UTF-8");
                 JSONObject jsonObject = new JSONObject(msg);
                 String command = jsonObject.getString("command");
@@ -340,10 +340,6 @@ public class TCPService extends Service {
                 }else if ("getGroupInfoById".equals(command)) {
                     int id = jsonObject.getInt("id");
                     String groupName = jsonObject.getString("groupName");
-                    String groupHead = null;
-                    if (jsonObject.has("groupHead")){
-                        groupHead = jsonObject.getString("groupHead");
-                    }
                     Group group = new Group();
                     group.setId(id);
                     group.setGroupName(groupName);
@@ -389,24 +385,29 @@ public class TCPService extends Service {
                 }else if ("getGroupHead".equals(command)){
                     int groupId = jsonObject.getInt("groupId");
                     byte fileMessageId = (byte) jsonObject.getInt("fileMessageId");
-
-                    System.out.println(groupId+" "+fileMessageId);
-                    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        byte[] decode = Base64.getDecoder().decode(encode);
-                        FileOutputStream outputStream;
-                        try {
-                            outputStream = new FileOutputStream(this.getExternalFilesDir("image/group").getAbsolutePath()+"/"+groupId+".sf");
-                            outputStream.write(decode);
-                            outputStream.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    SaveParameter saveParameter = new SaveParameter();
+                    saveParameter.path = "/image/group";
+                    saveParameter.fileName = "/"+groupId+".sf";
                     Intent intent=new Intent();
                     intent.setAction("com.dd.surf.service.tcpClient");
                     intent.putExtra("command", "getGroupHead");
                     intent.putExtra("groupId",groupId);
-                    sendContent(intent);*/
+                    saveParameter.intent = intent;
+                    byteArraySaveParameterMap.put(fileMessageId,saveParameter);
+                    System.out.println(groupId+" "+fileMessageId);
+                }else if ("getUserHead".equals(command)) {
+                    int userId = jsonObject.getInt("userId");
+                    byte fileMessageId = (byte) jsonObject.getInt("fileMessageId");
+                    SaveParameter saveParameter = new SaveParameter();
+                    saveParameter.path = "/image/user/avatar";
+                    saveParameter.fileName = "/" + userId + ".sf";
+                    Intent intent = new Intent();
+                    intent.setAction("com.dd.surf.service.tcpClient");
+                    intent.putExtra("command", "getUserHead");
+                    intent.putExtra("userId", userId);
+                    saveParameter.intent = intent;
+                    byteArraySaveParameterMap.put(fileMessageId, saveParameter);
+                    System.out.println(userId + " " + fileMessageId);
                 }
                 System.out.println("message : "+msg);
                 byteArrayOutputStreamMap.remove(messageId);
@@ -425,20 +426,23 @@ public class TCPService extends Service {
                 byteArrayOutputStreamMap.put(messageId,byteArrayOutputStream);
             }
             if (transferCompleteFlag == 1){
+                System.out.println("我开始了"+messageId);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     FileOutputStream outputStream;
                     try {
-                        /*outputStream = new FileOutputStream(this.getExternalFilesDir("").getAbsolutePath()+"/"+groupId+".sf");
-                        outputStream.write(decode);
-                        outputStream.close();*/
+                        SaveParameter saveParameter = byteArraySaveParameterMap.get(messageId);
+                        outputStream = new FileOutputStream(this.getExternalFilesDir(saveParameter.path).getAbsolutePath()+saveParameter.fileName);
+                        outputStream.write(byteArrayOutputStreamMap.get(messageId).toByteArray());
+                        outputStream.close();
+                        sendContent(saveParameter.intent);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 byteArrayOutputStreamMap.remove(messageId);
+                //System.out.println("我是大傻逼 : "+Arrays.toString(bytes));
             }
         }
-        System.out.println("我是大傻逼 : "+Arrays.toString(bytes));
 
     }
 
@@ -643,6 +647,17 @@ public class TCPService extends Service {
         try {
             jsonObject.put("command","getGroupHead");
             jsonObject.put("groupId",groupId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        send(jsonObject);
+    }
+
+    public void getUserHead(int userId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("command","getUserHead");
+            jsonObject.put("userId",userId);
         } catch (JSONException e) {
             e.printStackTrace();
         }

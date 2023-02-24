@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import com.dd.surf.UserInfo;
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
 import com.dd.surf.util.Client;
+import com.dd.surf.view.ClipPathCircleView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
 
     public TextView userName;
     public TextView name;
+    public ClipPathCircleView userAvatar;
 
     public LinearLayout messageListLayout;
     public LinearLayout friendListLayout;
@@ -71,6 +74,8 @@ public class AdapterMain extends RecyclerView.Adapter<AdapterMain.ViewPagerHolde
         View myInfo = layoutInflater.inflate(R.layout.view_my_info,null);
         userName = myInfo.findViewById(R.id.user_name);
         name = myInfo.findViewById(R.id.name);
+        userAvatar = myInfo.findViewById(R.id.head);
+
         View userInfo = myInfo.findViewById(R.id.userInfo);
         userInfo.setOnClickListener(v -> {
             Intent intent = new Intent(activity, UserInfo.class);

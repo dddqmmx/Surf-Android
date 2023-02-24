@@ -124,7 +124,10 @@ public class Main extends AppCompatActivity {
             viewPager.setAdapter(adapterMain);
             tabLayoutMediator.attach();
 
+
+            service.getUserHead(Client.userId);
             service.getUserInfo();
+
         }
 
         @Override
@@ -156,7 +159,6 @@ public class Main extends AppCompatActivity {
                     adapterMain.name.setText(user.getName());
                     adapterMain.userName.setText(user.getUserName());
                     service.getGroupList();
-                    //service.getUserFriend();
                     break;
                 case "getGroupList":
                     try {
@@ -181,6 +183,7 @@ public class Main extends AppCompatActivity {
                             int id = groupList.getInt(i);
                             Client.friendsList.add(id);
                             adapterMain.addFriend(id);
+                            service.getUserHead(id);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -216,6 +219,24 @@ public class Main extends AppCompatActivity {
                             if (child.getContentDescription() == String.valueOf(groupId)){
                                 ImageView head = child.findViewById(R.id.head);
                                 head.setImageBitmap(BitMapUtil.openImage(Main.this.getExternalFilesDir("image/group/").getAbsolutePath()+"/"+groupId+".sf"));
+                            }
+                        }
+                    }
+                case "getUserHead":
+                    int userId = intent.getIntExtra("userId", 0);
+                    System.out.println("userId"+userId);
+                    System.out.println("Client.userId"+Client.userId);
+                    if (userId == Client.userId){
+                        System.out.println("奥利奥利安");
+                        adapterMain.userAvatar.setImageBitmap(BitMapUtil.openImage(Main.this.getExternalFilesDir("image/user/avatar").getAbsolutePath()+"/"+userId+".sf"));
+                        //adapterMain.userAvatar.setAlpha(0);
+                    }
+                    for (int i = 0 ; i < adapterMain.friendListLayout.getChildCount();i++){
+                        View child = adapterMain.friendListLayout.getChildAt(i);
+                        if (child.getId() == R.id.message_root){
+                            if (child.getContentDescription() == String.valueOf(userId)){
+                                ImageView head = child.findViewById(R.id.head);
+                                head.setImageBitmap(BitMapUtil.openImage(Main.this.getExternalFilesDir("image/user/avatar").getAbsolutePath()+"/"+userId+".sf"));
                             }
                         }
                     }

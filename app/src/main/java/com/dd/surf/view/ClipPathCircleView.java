@@ -43,13 +43,17 @@ public class ClipPathCircleView extends AppCompatImageView {
 
 
     private void init(){
+        init(drawableToBitmap(getDrawable()));
+    }
+
+    private void init(Bitmap mBitmap){
         mPaint = new Paint();
         mPaint.setDither(true);
         mPaint.setAntiAlias(true);
 
         mPath = new Path();
         mRect = new RectF();
-        mBitmap = drawableToBitmap(getDrawable());
+        this.mBitmap = mBitmap;
     }
 
     @Override
@@ -79,6 +83,11 @@ public class ClipPathCircleView extends AppCompatImageView {
         // 第一个rect是要画图片的哪个区域，第一个rect是画到哪里
         canvas.drawBitmap(mBitmap,null,mRect,mPaint);
 
+    }
+
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        init(bm);
     }
 
     //写一个drawble转BitMap的方法
