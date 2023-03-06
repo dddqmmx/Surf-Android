@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.dd.surf.pojo.Group;
 import com.dd.surf.service.TCPService;
+import com.dd.surf.util.BitMapUtil;
 import com.dd.surf.util.Client;
 
 public class GroupInfo extends AppCompatActivity {
@@ -28,6 +29,7 @@ public class GroupInfo extends AppCompatActivity {
     LayoutInflater layoutInflater = null;
 
     public int id;
+    public ImageView groupAvatar;
 
     public static TextView nameTextView;
     public static TextView idTextView;
@@ -75,14 +77,14 @@ public class GroupInfo extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.name);
         idTextView = findViewById(R.id.user_name);
+        groupAvatar = findViewById(R.id.head);
 
         if (Client.hasGroupInfo(id)){
             Group groupInfo = Client.getGroupInfo(id);
             nameTextView.setText(groupInfo.getGroupName());
             idTextView.setText(String.valueOf(groupInfo.getId()));
-        } else {
-            Client.getGroupInfoByServer(id);
         }
+
 
         LinearLayout optionsLayout = findViewById(R.id.optionsLayout);
         if (Client.groupList.contains(id)){
@@ -125,6 +127,7 @@ public class GroupInfo extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
+            service.getGroupHead(id);
         }
 
         @Override
@@ -156,6 +159,7 @@ public class GroupInfo extends AppCompatActivity {
                     name= intent.getStringExtra("groupName");
                     nameTextView.setText(name);
                     idTextView.setText(String.valueOf(id));
+                    service.getGroupHead(id);
                     break;
                 case "addGroupRequest":
                     int code = intent.getIntExtra("code",2);
@@ -169,6 +173,16 @@ public class GroupInfo extends AppCompatActivity {
                         case 2:
                             Toast.makeText(GroupInfo.this,"服务器内部处理出现错误",Toast.LENGTH_LONG).show();
                             break;
+                    }
+                    break;
+                case "getGroupHead":
+                    System.out.println("ok11111111");
+                    int groupId = intent.getIntExtra("groupId", 0);
+                    System.out.println(groupId);
+                    System.out.println(GroupInfo.this.id);
+                    if (groupId == GroupInfo.this.id){
+                        System.out.println("ok22222222");
+                        groupAvatar.setImageBitmap(BitMapUtil.openImage(GroupInfo.this.getExternalFilesDir("image/group").getAbsolutePath()+"/"+groupId+".sf"));
                     }
                     break;
             }

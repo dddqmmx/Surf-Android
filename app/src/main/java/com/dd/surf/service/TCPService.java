@@ -9,6 +9,7 @@ import android.os.IBinder;
 import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.util.Client;
+import com.dd.surf.util.FileUtil;
 import com.dd.surf.util.MessageUtil;
 import com.dd.surf.util.SaveParameter;
 
@@ -20,11 +21,14 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -408,6 +412,56 @@ public class TCPService extends Service {
                     saveParameter.intent = intent;
                     byteArraySaveParameterMap.put(fileMessageId, saveParameter);
                     System.out.println(userId + " " + fileMessageId);
+                }else if ("getGroupHeadSurfFile".equals(command)){
+                    int groupId = jsonObject.getInt("groupId");
+                    long length = jsonObject.getLong("length");
+                    String md5 = jsonObject.getString("md5");
+                    String groupAvatar = getExternalFilesDir("image/group/").getAbsolutePath() + "/" + groupId + ".sf";
+                    File file = new File(groupAvatar);
+                    if (file.length() == length){
+                        System.out.println("ok");
+                        byte[] data = new byte[(int) file.length()];
+                        new FileInputStream(file).read(data);
+                        if (md5.equals(FileUtil.getMd5(data))){
+                            Intent intent=new Intent();
+                            intent.setAction("com.dd.surf.service.tcpClient");
+                            intent.putExtra("command", "getGroupHead");
+                            intent.putExtra("groupId",groupId);
+                            sendContent(intent);
+                            return;
+                        }
+                    } else {
+                        System.out.println("迷你世界!!!!!!!!!!");
+                        JSONObject jsonObject1 = new JSONObject();
+                        jsonObject1.put("command","getGroupHead");
+                        jsonObject1.put("groupId",groupId);
+                        send(jsonObject1);
+                    }
+                }else if ("getUserHeadSurfFile".equals(command)){
+                    int userId = jsonObject.getInt("userId");
+                    long length = jsonObject.getLong("length");
+                    String md5 = jsonObject.getString("md5");
+                    String groupAvatar = getExternalFilesDir("/image/user/avatar").getAbsolutePath() + "/" + userId + ".sf";
+                    File file = new File(groupAvatar);
+                    if (file.length() == length){
+                        byte[] data = new byte[(int) file.length()];
+                        new FileInputStream(file).read(data);
+                        if (md5.equals(FileUtil.getMd5(data))){
+                            System.out.println("哈姆？哈姆？哈姆的哈贝贝哈姆？");
+                            Intent intent=new Intent();
+                            intent.setAction("com.dd.surf.service.tcpClient");
+                            intent.putExtra("command", "getUserHead");
+                            intent.putExtra("userId",userId);
+                            sendContent(intent);
+                            return;
+                        }
+                    }else {
+                        System.out.println("卧槽冰!!!!!!!!!!");
+                        JSONObject jsonObject1 = new JSONObject();
+                        jsonObject1.put("command","getUserHead");
+                        jsonObject1.put("userId",userId);
+                        send(jsonObject1);
+                    }
                 }
                 System.out.println("message : "+msg);
                 byteArrayOutputStreamMap.remove(messageId);
@@ -643,20 +697,32 @@ public class TCPService extends Service {
     }
 
     public void getGroupHead(int groupId){
+        String groupAvatar = getExternalFilesDir("image/group/").getAbsolutePath() + "/" + groupId + ".sf";
+        File file = new File(groupAvatar);
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("command","getGroupHead");
+            if (file.exists()){
+                jsonObject.put("command","getGroupHeadSurfFile");
+            }else{
+                jsonObject.put("command","getGroupHead");
+            }
             jsonObject.put("groupId",groupId);
         } catch (JSONException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         send(jsonObject);
     }
 
     public void getUserHead(int userId){
+        String userAvatar = getExternalFilesDir("image/user/avatar").getAbsolutePath() + "/" + userId + ".sf";
+        File file = new File(userAvatar);
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("command","getUserHead");
+            if (file.exists()){
+                jsonObject.put("command","getUserHeadSurfFile");
+            }else {
+                jsonObject.put("command","getUserHead");
+            }
             jsonObject.put("userId",userId);
         } catch (JSONException e) {
             e.printStackTrace();

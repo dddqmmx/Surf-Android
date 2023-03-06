@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
+import com.dd.surf.util.BitMapUtil;
 import com.dd.surf.util.Client;
 
 import org.json.JSONArray;
@@ -111,7 +112,10 @@ public class Chat extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
             }
         });
-
+        ImageView imageView1 = (ImageView) findViewById(R.id.microphone);
+        imageView1.setOnClickListener(v -> {
+            service.getUserHead(2);
+        });
 /*        rowCount = control.getMessageCount(type,id);
         if (rowCount <= 20){
             rowCount = 0;
@@ -251,13 +255,21 @@ public class Chat extends AppCompatActivity {
                     JSONArray groupList = null;
                     try {
                         groupList = new JSONArray(intent.getStringExtra("messageList"));
+                        List<Integer> arrayList = new ArrayList<>();
                         for (int i = 0; i < groupList.length(); i++) {
                             JSONObject jsonObject = groupList.getJSONObject(i);
                             int id = jsonObject.getInt("id");
                             int senderId = jsonObject.getInt("senderId");
+                            if (!arrayList.contains(senderId)) {
+                                arrayList.add(senderId);
+                            }
                             /*String senderName = jsonObject.getString("senderName");*/
                             String message = jsonObject.getString("message");
                             addMessageText(senderId,message);
+                        }
+                        for (int i = 0; i <arrayList.size(); i++) {
+                            System.out.println(arrayList.get(i));
+                            service.getUserHead(arrayList.get(i));
                         }
                         break;
                     } catch (JSONException e) {
@@ -289,6 +301,24 @@ public class Chat extends AppCompatActivity {
                             addMessageText(senderId,message);
                         }
                     }
+                    break;
+                case "getUserHead":
+                    System.out.println("1111");
+                    int userId = intent.getIntExtra("userId", 0);
+                    System.out.println("userId"+userId);
+                    System.out.println("Client.userId"+Client.userId);
+                    for (int i = 0 ; i < messageList.getChildCount();i++){
+                        View child = messageList.getChildAt(i);
+                        if (child.getId() == R.id.message){
+                            System.out.println("啊啊啊啊啊啊");
+                            if (child.getContentDescription() == String.valueOf(userId)){
+                                System.out.println("说的道理？？？？");
+                                ImageView avatarView = child.findViewById(R.id.head);
+                                avatarView.setImageBitmap(BitMapUtil.openImage(Chat.this.getExternalFilesDir("image/user/avatar").getAbsolutePath()+"/"+userId+".sf"));
+                            }
+                        }
+                    }
+                    break;
             }
         }
     }

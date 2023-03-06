@@ -46,7 +46,7 @@ public class ClipPathCircleView extends AppCompatImageView {
         init(drawableToBitmap(getDrawable()));
     }
 
-    private void init(Bitmap mBitmap){
+    public void init(Bitmap mBitmap){
         mPaint = new Paint();
         mPaint.setDither(true);
         mPaint.setAntiAlias(true);

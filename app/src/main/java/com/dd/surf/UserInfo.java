@@ -3,13 +3,17 @@ package com.dd.surf;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +24,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.dd.surf.pojo.Message;
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
+import com.dd.surf.util.BitMapUtil;
 import com.dd.surf.util.Client;
+import com.dd.surf.view.ClipPathCircleView;
 
 public class UserInfo extends AppCompatActivity {
+
+    public Activity activity;
 
     public int id;
 
@@ -33,6 +42,7 @@ public class UserInfo extends AppCompatActivity {
 
     private ContentReceiver mReceiver;
 
+    private ImageView userAvatar;
     private TextView nameTextView;
     private TextView userNameTextView;
     private TextView personalProfileTextView;
@@ -40,6 +50,7 @@ public class UserInfo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
 
         Intent intent = getIntent();
         id = intent.getIntExtra("id",0);
@@ -74,6 +85,7 @@ public class UserInfo extends AppCompatActivity {
 
         setContentView(R.layout.activity_user_info);
 
+        userAvatar = findViewById(R.id.head);
         nameTextView  = findViewById(R.id.name);
         userNameTextView = findViewById(R.id.user_name);
         personalProfileTextView = findViewById(R.id.personal_profile);
@@ -84,6 +96,7 @@ public class UserInfo extends AppCompatActivity {
             userNameTextView.setText(user.getUserName());
             personalProfileTextView.setText(user.getPersonalProfile());
         }
+        //userAvatar.setImageBitmap(BitMapUtil.openImage(UserInfo.this.getExternalFilesDir("image/user/avatar").getAbsolutePath() + "/" + 2 + ".sf"));
 
         LinearLayout optionsLayout = findViewById(R.id.optionsLayout);
         if(id == Client.userId){
@@ -100,14 +113,15 @@ public class UserInfo extends AppCompatActivity {
                 });
             }
         }
+        //setUserAvatar(3);
     }
+
     public class MyServiceConn implements ServiceConnection {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
-
-            service.getUserInfoById(id);
+            service.getUserHead(id);
         }
 
         @Override
@@ -130,7 +144,6 @@ public class UserInfo extends AppCompatActivity {
     public class ContentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int id;
             String name;
             String userName;
             String personalProfile;
@@ -144,6 +157,7 @@ public class UserInfo extends AppCompatActivity {
                     nameTextView.setText(name);
                     userNameTextView.setText(userName);
                     personalProfileTextView.setText(personalProfile);
+                    //service.getUserHead(id);
                     break;
                 case "addFriendRequest":
                     id = intent.getIntExtra("id",0);
@@ -159,6 +173,14 @@ public class UserInfo extends AppCompatActivity {
                         case 2:
                             Toast.makeText(UserInfo.this,"服务器内部处理出现错误",Toast.LENGTH_LONG).show();
                             break;
+                    }
+                    break;
+                case "getUserHead":
+                    int userId = intent.getIntExtra("userId", 0);
+                    System.out.println("userId"+userId);
+                    System.out.println("Client.userId"+Client.userId);
+                    if (userId == id){
+                        userAvatar.setImageBitmap(BitMapUtil.openImage(UserInfo.this.getExternalFilesDir("image/user/avatar").getAbsolutePath()+"/"+userId+".sf"));
                     }
                     break;
             }
