@@ -93,8 +93,6 @@ public class Chat extends AppCompatActivity {
         filter.addAction("com.dd.surf.service.tcpClient");
         registerReceiver(mReceiver, filter);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
         setContentView(R.layout.activity_chat);
 
 

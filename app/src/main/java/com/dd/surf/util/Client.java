@@ -64,8 +64,8 @@ public class Client extends Application {
 
     public static List<Integer> groupList = new ArrayList<>();
 
-    //public static String host =  "192.168.107.117";
-    public static String host = "192.168.6.206";
+    public static String host =  "192.168.107.117";
+    //public static String host = "192.168.6.206";
     //public static String host = "39.107.229.253";
     public static String sessionId;
 

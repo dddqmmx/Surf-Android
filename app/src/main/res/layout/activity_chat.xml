@@ -29,8 +29,8 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F7F7F7
-"
+        android:background="#F7F7F7"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
