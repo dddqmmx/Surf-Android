@@ -6,10 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,6 +41,8 @@ public class Chat extends AppCompatActivity {
     LayoutInflater layoutInflater = null;
     //Control control = null;
     LinearLayout messageList = null;
+
+    ScrollView scrollView = null;
 
     public TextView titleText;
 
@@ -79,8 +84,6 @@ public class Chat extends AppCompatActivity {
             actionBar.show();
         }
 
-        setContentView(R.layout.activity_chat);
-
         conn=new MyServiceConn();
         bindService(new Intent(Chat.this, TCPService.class), conn, BIND_AUTO_CREATE);
 
@@ -90,13 +93,35 @@ public class Chat extends AppCompatActivity {
         filter.addAction("com.dd.surf.service.tcpClient");
         registerReceiver(mReceiver, filter);
 
-        ScrollView scrollView = findViewById(R.id.messageScroll);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+        setContentView(R.layout.activity_chat);
+
+
+        scrollView = findViewById(R.id.messageScroll);
+        //scrollView.setLayoutManager;
         messageList = findViewById(R.id.message_list);
 
 
-        EditText messageEditText = findViewById(R.id.messageEditText);
-        messageEditText.setOnClickListener(v -> {
+        final View decorView = getWindow().getDecorView();
+        decorView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Rect rect = new Rect();
+            decorView.getWindowVisibleDisplayFrame(rect);
+            int screenHeight = decorView.getRootView().getHeight();
+            int keyboardHeight = screenHeight - rect.bottom;
 
+            // 判断键盘是否弹出
+            if (keyboardHeight > 0) {
+                // 如果ScrollView已经滚动到底部，则将ScrollView滚动到底部
+                if (scrollView.getScrollY() + scrollView.getHeight() >= messageList.getHeight()) {
+                    scrollView.post(() -> scrollView.scrollTo(0, messageList.getHeight()));
+                }
+            }
+        });
+
+        EditText messageEditText = findViewById(R.id.messageEditText);
+        messageEditText.setOnClickListener((View view)->{
+            scrollView.fullScroll(View.FOCUS_DOWN);
         });
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(v -> {
@@ -105,79 +130,19 @@ public class Chat extends AppCompatActivity {
                 if (!messageText.equals("")) {
                     int userId = Client.userId;
                     addMessageText(userId,messageText);
-                    service.sendTextMessage(type,id,messageText);
                     messageEditText.setText("");
+                    service.getUserHead(userId);
+                    int height = messageList.getHeight();
+                    scrollView.post(() -> scrollView.scrollTo(0, height));
                 }
             }catch (Exception e) {
                 Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
             }
         });
-        ImageView imageView1 = (ImageView) findViewById(R.id.microphone);
+        ImageView imageView1 = findViewById(R.id.microphone);
         imageView1.setOnClickListener(v -> {
             service.getUserHead(2);
         });
-/*        rowCount = control.getMessageCount(type,id);
-        if (rowCount <= 20){
-            rowCount = 0;
-            List<ChatMessage> chatMessageList = control.getMessageList(type,id,rowCount,20);
-            for (ChatMessage chatMessage : chatMessageList){
-                addMessageText(chatMessage.getSenderId(),chatMessage.getMessage());
-            }
-        }*/
-
-        /*final Intent intent1 = new Intent(this, UpdateChatMessageService.class);
-        startService(intent1);*/
-        /*messageUpdateThread = new Thread(()->{
-            while (true) {
-                try {
-                    System.out.println("is Run");
-                    int serverCount = control.getMessageCount(1,3);
-                    System.out.println(serverCount);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                *//*if (serverCount > rowCount){
-                    rowCount = serverCount;
-                    List<ChatMessage> chatMessageList = control.getMessageList(type,id,rowCount,20);
-                    for (ChatMessage chatMessage : chatMessageList){
-                        addMessageText(chatMessage.getSenderId(),chatMessage.getMessage());
-                    }
-                }
-                try {
-                    Thread.sleep(0);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }*//*
-            }
-        });
-        messageUpdateThread.start();*/
-
-        //Out.print(this,String.valueOf());
-/*        messageUpdateThread = new Thread(()->{
-            while (true) {
-                int serverCount = control.getMessageCount(type,id);
-                System.out.println("is Run");
-                if (serverCount > rowCount){
-                    rowCount = serverCount;
-                    List<ChatMessage> chatMessageList = control.getMessageList(type,id,rowCount,20);
-                    for (ChatMessage chatMessage : chatMessageList){
-                        addMessageText(chatMessage.getSenderId(),chatMessage.getMessage());
-                    }
-                }
-                try {
-                    Thread.sleep(0);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
-        messageUpdateThread.start();*/
-
-/*        addMessageText(1,"我是傻逼");
-        addMessageText(2,"我也是傻逼");
-        a1ddMessageText(3,"👀👀👀");
-        addMessageText(4,"扣1送原神6480");*/
-
     }
 
     protected void addMessageText(int id,String text){
@@ -216,7 +181,6 @@ public class Chat extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((TCPService.LocalBinder) binder).getService();
-            /*service.initialization();*/
             if (type == 1){
                 service.getGroupInfo(id);
                 service.getGroupMessage(id);
@@ -249,6 +213,7 @@ public class Chat extends AppCompatActivity {
             switch (command) {
                 case "getGroupInfo":
                     String groupName = intent.getStringExtra("groupName");
+                    System.out.println(groupName);
                     titleText.setText(groupName);
                     break;
                 case "getGroupMessage":
@@ -271,10 +236,10 @@ public class Chat extends AppCompatActivity {
                             System.out.println(arrayList.get(i));
                             service.getUserHead(arrayList.get(i));
                         }
-                        break;
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
                     break;
                 case "getUserInfoById":
                     int id = intent.getIntExtra("id",0);
@@ -293,7 +258,7 @@ public class Chat extends AppCompatActivity {
                     if (type == 1){
                         int contactId = intent.getIntExtra("contactId",0);
                         Chat chat = (Chat) context;
-                        System.out.println(""+chat.id);
+                        System.out.println("chat id"+chat.id);
                         if (contactId == chat.id){
                             int senderId = intent.getIntExtra("sender",0);
                             /*String senderName = jsonObject.getString("senderName");*/
@@ -303,16 +268,11 @@ public class Chat extends AppCompatActivity {
                     }
                     break;
                 case "getUserHead":
-                    System.out.println("1111");
                     int userId = intent.getIntExtra("userId", 0);
-                    System.out.println("userId"+userId);
-                    System.out.println("Client.userId"+Client.userId);
                     for (int i = 0 ; i < messageList.getChildCount();i++){
                         View child = messageList.getChildAt(i);
                         if (child.getId() == R.id.message){
-                            System.out.println("啊啊啊啊啊啊");
                             if (child.getContentDescription() == String.valueOf(userId)){
-                                System.out.println("说的道理？？？？");
                                 ImageView avatarView = child.findViewById(R.id.head);
                                 avatarView.setImageBitmap(BitMapUtil.openImage(Chat.this.getExternalFilesDir("image/user/avatar").getAbsolutePath()+"/"+userId+".sf"));
                             }

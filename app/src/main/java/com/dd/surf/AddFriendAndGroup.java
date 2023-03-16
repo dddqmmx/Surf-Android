@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
+import com.dd.surf.util.BitMapUtil;
 import com.dd.surf.util.Client;
 
 import org.json.JSONArray;
@@ -115,6 +116,7 @@ public class AddFriendAndGroup extends AppCompatActivity {
             }
         }
         list.addView(messageView);
+        service.getGroupHead(id);
     }
 
     public void addUser(int id){
@@ -136,6 +138,7 @@ public class AddFriendAndGroup extends AppCompatActivity {
             }
         }
         list.addView(friendView);
+        service.getUserHead(id);
     }
 
 
@@ -223,6 +226,33 @@ public class AddFriendAndGroup extends AppCompatActivity {
                             if (child.getContentDescription() == String.valueOf(id)){
                                 TextView nameView = child.findViewById(R.id.name);
                                 nameView.setText(name);
+                            }
+                        }
+                    }
+                    break;
+                case "getGroupHead":
+                    int groupId = intent.getIntExtra("groupId", 0);
+                    for (int i = 0 ; i < list.getChildCount();i++){
+                        View child = list.getChildAt(i);
+                        if (child.getId() == R.id.message_root){
+                            if (child.getContentDescription() == String.valueOf(groupId)){
+                                ImageView head = child.findViewById(R.id.head);
+                                head.setImageBitmap(BitMapUtil.openImage(AddFriendAndGroup.this.getExternalFilesDir("image/group/").getAbsolutePath()+"/"+groupId+".sf"));
+                            }
+                        }
+                    }
+                case "getUserHead":
+                    int userId = intent.getIntExtra("userId", 0);
+                    System.out.println("userId"+userId);
+                    System.out.println("Client.userId"+Client.userId);
+                    for (int i = 0 ; i < list.getChildCount();i++){
+                        View child = list.getChildAt(i);
+                        if (child.getId() == R.id.message_root){
+                            System.out.println("啊啊啊啊啊啊");
+                            if (child.getContentDescription() == String.valueOf(userId)){
+                                System.out.println("说的道理？？？？");
+                                ImageView avatarView = child.findViewById(R.id.head);
+                                avatarView.setImageBitmap(BitMapUtil.openImage(AddFriendAndGroup.this.getExternalFilesDir("image/user/avatar").getAbsolutePath()+"/"+userId+".sf"));
                             }
                         }
                     }

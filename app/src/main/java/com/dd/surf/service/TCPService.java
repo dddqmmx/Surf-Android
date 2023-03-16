@@ -145,6 +145,7 @@ public class TCPService extends Service {
                         if (messageBytes.length >= 4 + messageLength)
                         {
                             byte[] message = Arrays.copyOfRange(messageBytes, 4, 4 + messageLength);
+                            System.out.println(Arrays.toString(message));
                             processMessage(message);
                             messageBytes = Arrays.copyOfRange(messageBytes, 4 + messageLength, messageBytes.length);
                         } else {
@@ -201,6 +202,7 @@ public class TCPService extends Service {
             if (transferCompleteFlag == 1){
                 //System.out.println(Arrays.toString(byteArrayOutputStreamMap.get(messageId).toByteArray()));
                 String msg = byteArrayOutputStreamMap.get(messageId).toString("UTF-8");
+                System.out.println("msg"+msg);
                 JSONObject jsonObject = new JSONObject(msg);
                 String command = jsonObject.getString("command");
                 if ("connect".equals(command)) {
@@ -248,6 +250,7 @@ public class TCPService extends Service {
                     intent.putExtra("userList",userList.toString());
                     sendContent(intent);
                 } else if ("getGroupInfo".equals(command)){
+                    System.out.println("我收到了");
                     String groupName = jsonObject.getString("groupName");
                     Intent intent=new Intent();
                     intent.setAction("com.dd.surf.service.tcpClient");

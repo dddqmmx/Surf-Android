@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.dd.surf.pojo.Group;
 import com.dd.surf.pojo.User;
 import com.dd.surf.service.TCPService;
+import com.dd.surf.util.BitMapUtil;
 import com.dd.surf.util.Client;
 
 import org.json.JSONArray;
@@ -129,6 +130,7 @@ public class AddRequestList extends AppCompatActivity {
             service.agreeGroupRequest(id);
         });
         friendRequestList.addView(friendView);
+        service.getUserHead(userId);
     }
 
     public void addFriendRequest(int id){
@@ -154,6 +156,7 @@ public class AddRequestList extends AppCompatActivity {
             service.agreeFriendRequest(id);
         });
         friendRequestList.addView(friendView);
+        service.getUserHead(id);
     }
 
 
@@ -217,10 +220,7 @@ public class AddRequestList extends AppCompatActivity {
                         if (child.getId() == R.id.friend_request){
                             String contentDescription = (String) child.getContentDescription();
                             matcher = Pattern.compile(regId).matcher(contentDescription);
-                            if (contentDescription.equals(String.valueOf(id))){
-                                TextView nameView = child.findViewById(R.id.name);
-                                nameView.setText(name);
-                            }else if (matcher.find() && String.valueOf(id).equals(matcher.group(2))){
+                            if ((contentDescription.equals(String.valueOf(id))) || (matcher.find() && String.valueOf(id).equals(matcher.group(2)))){
                                 TextView nameView = child.findViewById(R.id.name);
                                 nameView.setText(name);
                             }
@@ -299,6 +299,35 @@ public class AddRequestList extends AppCompatActivity {
                             }
                         }
                     }
+                    break;
+                case "getUserHead":
+                    int userId = intent.getIntExtra("userId", 0);
+                    System.out.println("userId"+userId);
+                    System.out.println("Client.userId"+Client.userId);
+                    for (int i = 0 ; i < friendRequestList.getChildCount();i++){
+                        View child = friendRequestList.getChildAt(i);
+                        System.out.println(i);
+                        if (child.getId() == R.id.friend_request){
+                            String contentDescription = (String) child.getContentDescription();
+                            matcher = Pattern.compile(regId).matcher(contentDescription);
+                            if ((contentDescription.equals(String.valueOf(userId))) || (matcher.find() && String.valueOf(userId).equals(matcher.group(2)))){
+                                ImageView avatarView = child.findViewById(R.id.head);
+                                avatarView.setImageBitmap(BitMapUtil.openImage(AddRequestList.this.getExternalFilesDir("image/user/avatar").getAbsolutePath()+"/"+userId+".sf"));
+                            }
+                        }
+                    }
+                    /*for (int i = 0 ; i < list.getChildCount();i++){
+                        View child = list.getChildAt(i);
+                        if (child.getId() == R.id.message_root){
+                            System.out.println("啊啊啊啊啊啊");
+                            if (child.getContentDescription() == String.valueOf(userId)){
+                                System.out.println("说的道理？？？？");
+                                ImageView avatarView = child.findViewById(R.id.head);
+                                avatarView.setImageBitmap(BitMapUtil.openImage(AddFriendAndGroup.this.getExternalFilesDir("image/user/avatar").getAbsolutePath()+"/"+userId+".sf"));
+                            }
+                        }
+                    }
+                    */
                     break;
             }
         }
